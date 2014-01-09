@@ -1,0 +1,49 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require bootstrap
+ *= require font-awesome
+ *= require ./sb-admin
+ *= require_self
+ *= require_tree .
+ */
+
+.modal-content > .alert {
+  margin: 0;
+  webkit-border-bottom-right-radius: 0;
+  -webkit-border-bottom-left-radius: 0;
+  -moz-border-radius-bottomright: 0;
+  -moz-border-radius-bottomleft: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.visible {
+  display: block;
+}
+
+.dropdown-menu.navbar-nav > li {
+  float: none;
+}
+.side-nav > li.dropdown > ul.dropdown-menu > li.active > a {
+  color: #FFF;
+}
+
+.btn-breadcrumb {
+  margin-bottom: 20px;
+}
+
+.ww {
+  white-space: normal;
+}
+
+.no-margins {
+  margin: 0;
+}

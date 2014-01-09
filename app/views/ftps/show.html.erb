@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Host:</strong>
+  <%= @ftp.host %>
+</p>
+
+<p>
+  <strong>Post:</strong>
+  <%= @ftp.post %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @ftp.user %>
+</p>
+
+<p>
+  <strong>Password digest:</strong>
+  <%= @ftp.password_digest %>
+</p>
+
+<p>
+  <strong>Root path:</strong>
+  <%= @ftp.root_path %>
+</p>
+
+<p>
+  <strong>Channel:</strong>
+  <%= @ftp.channel %>
+</p>
+
+<%= link_to 'Edit', edit_ftp_path(@ftp) %> |
+<%= link_to 'Back', ftps_path %>

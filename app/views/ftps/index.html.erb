@@ -1,0 +1,37 @@
+<h1>Listing ftps</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Host</th>
+      <th>Post</th>
+      <th>User</th>
+      <th>Password digest</th>
+      <th>Root path</th>
+      <th>Channel</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @ftps.each do |ftp| %>
+      <tr>
+        <td><%= ftp.host %></td>
+        <td><%= ftp.post %></td>
+        <td><%= ftp.user %></td>
+        <td><%= ftp.password_digest %></td>
+        <td><%= ftp.root_path %></td>
+        <td><%= ftp.channel %></td>
+        <td><%= link_to 'Show', ftp %></td>
+        <td><%= link_to 'Edit', edit_ftp_path(ftp) %></td>
+        <td><%= link_to 'Destroy', ftp, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Ftp', new_ftp_path %>

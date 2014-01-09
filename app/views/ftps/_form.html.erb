@@ -1,0 +1,41 @@
+<%= form_for(@ftp) do |f| %>
+  <% if @ftp.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@ftp.errors.count, "error") %> prohibited this ftp from being saved:</h2>
+
+      <ul>
+      <% @ftp.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :host %><br>
+    <%= f.text_field :host %>
+  </div>
+  <div class="field">
+    <%= f.label :post %><br>
+    <%= f.number_field :post %>
+  </div>
+  <div class="field">
+    <%= f.label :user %><br>
+    <%= f.text_field :user %>
+  </div>
+  <div class="field">
+    <%= f.label :password_digest %><br>
+    <%= f.text_field :password_digest %>
+  </div>
+  <div class="field">
+    <%= f.label :root_path %><br>
+    <%= f.text_field :root_path %>
+  </div>
+  <div class="field">
+    <%= f.label :channel %><br>
+    <%= f.text_field :channel %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

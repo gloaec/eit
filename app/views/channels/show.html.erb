@@ -1,0 +1,26 @@
+<% content_for :title, @channel.name %>
+<% content_for :subtitle, 'Overview' %>
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @channel.name %>
+</p>
+
+<p>
+  <strong>Queue path:</strong>
+  <%= @channel.queue_path %>
+</p>
+
+<p>
+  <strong>Success path:</strong>
+  <%= @channel.success_path %>
+</p>
+
+<p>
+  <strong>Error path:</strong>
+  <%= @channel.error_path %>
+</p>
+
+<%= link_to 'Edit', edit_channel_path(@channel) %> |
+<%= link_to 'Back', channels_path %>
