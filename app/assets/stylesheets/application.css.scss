@@ -47,3 +47,39 @@
 .no-margins {
   margin: 0;
 }
+
+.panel-heading .label {
+  font-size: 10.5px;
+  vertical-align: middle;
+  margin-top: 10px;
+}
+
+
+.panel-heading .pull-right {
+  font-size: 16px;
+  line-height: 1.1;
+  vertical-align: middle;
+}
+
+.panel-heading a {
+  color: inherit;
+}
+
+
+.navbar-brand {
+  height: 50px;
+  width: 225px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: block;
+  background: url("/assets/nrj_logo.png") no-repeat scroll left center / 55px auto #272727;
+}
+
+
+span.hidden-xs { display: inline !important; }
+
+@media (max-width: 767px) {
+  span.hidden-xs {
+      display: none !important;
+  }
+}
