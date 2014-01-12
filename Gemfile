@@ -17,6 +17,8 @@ gem 'guard'
 gem 'guard-rake'
 gem 'nokogiri'
 gem 'time_difference'
+gem 'paperclip'
+gem 'momentjs-rails'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

@@ -14,4 +14,15 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
+//= require moment
 //= require_tree .
+
+$(function(){
+
+  $('.time').each(function(){
+    var datetime = new Date($(this).data('datetime'));
+    console.log($(this).data('datetime'), datetime);
+    $(this).text(moment(datetime).fromNow());
+  });
+
+});

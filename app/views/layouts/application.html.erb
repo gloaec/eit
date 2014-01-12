@@ -27,7 +27,12 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav side-nav">
-            <li><a href="index.html"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <% if can? :read, User %>
+              <li><a href="<%= users_path %>"><i class="fa fa-group"></i> FTP Servers</a></li>
+            <% end %>
+            <% if can? :read, Ftp %>
+              <li><a href="<%= ftps_path %>"><i class="fa fa-sitemap"></i> FTP Servers</a></li>
+            <% end %>
             <li class="dropdown <%= 'active' if params[:controller] == 'channels' %>">
               <a href="<%= channels_url %>" class="dropdown-toggle">
                 <i class="fa fa-th-list"></i>

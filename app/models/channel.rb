@@ -5,4 +5,5 @@ class Channel < ActiveRecord::Base
   has_many :admins, through: :channel_admins, source: :user
   has_many :channel_contacts, class_name: 'ChannelContact'
   has_many :contacts, through: :channel_contacts, source: :user
+  has_many :programs
 end

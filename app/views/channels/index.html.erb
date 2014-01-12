@@ -20,7 +20,17 @@
 <% end %>
 
 <div class="row">
-    <% @channels.each do |channel| %>
+    <% @channels.each do |channel|
+    
+      program = channel.programs.last || Program.new(
+        xml_file_name: "[No file]"
+      )
+        
+      program_class = 
+         if    program.new_record? then "default"
+         elsif program.errors.any? then "danger"
+         else "success" end
+    %>
       <div class="col-lg-12">
         <div class="panel panel-primary">
           <div class="panel-heading">
@@ -45,46 +55,100 @@
                 <% end %>
               <% end %>
             </span>
-            <br>
-            Latest :
-            <span class="label label-primary"><i class="fa fa-file"></i> TestFile.xml</span>
-            <span class="label label-primary"><i class="fa fa-clock-o"></i> an hour ago</span>
+            <% unless program.new_record? %>
+              <br/>
+              Latest :
+              <span class="label label-primary"><i class="fa fa-file"></i> <%= program.xml_file_name %></span>
+              <span class="label label-primary"><i class="fa fa-clock-o"></i> <span class="time" data-datetime="<%= program.created_at.iso8601 %>"></span></span>
+            <% end %>
             <span class="clearfix"></span>
           </div>
           <div class="panel-body">
 
             <div class="panel-group" id="accordion<%= channel.id %>">
-
-              <div class="panel panel-danger">
+              
+              <div class="panel panel-<%= program_class %>">
                 <div class="panel-heading clearfix">
                   <a data-toggle="collapse" data-parent="#accordion<%= channel.id %>" href="#collapse_xml<%= channel.id %>">
                     <h3 class="panel-title pull-left">
                       <i class="fa fa-code"></i>
-                      XML Processing Result
+                      XML
                     </h3>
                     <span class="pull-right">
-                      <span class="label label-danger"><i class="fa fa-warning"></i> 3</span>
-                      <span class="label label-warning"><i class="fa fa-warning"></i> 1</span>
+                      <% if program.errors.any? %>
+                        <span class="label label-danger"><i class="fa fa-warning"></i> <%= program.errors.where(:classname => 'danger').count %></span>
+                        <span class="label label-warning"><i class="fa fa-warning"></i> <%= program.errors.where(:classname => 'warning').count %></span>
+                      <% elsif !program.new_record?%>
+                        <span class="label label-success"><i class="fa fa-check"></i></span>
+                      <% end %>
                     </span>
                   </a>
                 </div>
                 <div id="collapse_xml<%= channel.id %>" class="panel-collapse collapse">
                   <div class="panel-body">
-                    <div class="alert alert-danger">
-                       <strong>
-                         <i class="fa fa-warning"></i>
-                         Syntax Error :
-                       </strong>
-                       Unexpected "&lt;" line 32
-                    </div>
-
-                    <div class="alert alert-danger no-margins">
-                       <strong>
-                         <i class="fa fa-clock-o"></i>
-                         45:32
-                         Time Gap
-                       </strong>
-                    </div>
+                    <% program.errors.each do |error| %>
+                      <div class="alert alert-<%= error.classname %> <%= "no-margins" if error == program.errors.last %>">
+                        <% gap = TimeDifference.between(error.before_event.end_time, error.after_event.start_time).in_general unless
+                            error.before_event.nil? or error.after_event.nil? %>
+                         <% case error.code.to_i %>
+                           <% when ProgramError::NO_GAP %>
+                             <strong>
+                               <i class="fa fa-clock-o"></i>
+                               <%= error.before_event.end_time.strftime("%H:%M:%S") %>
+                               <%= error.msg %> :
+                             </strong>
+                             0s between
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.before_event.name.humanize %></strong>
+                             and
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.after_event.name.humanize %></strong>
+                           <% when ProgramError::WARNING_GAP %>
+                             <strong>
+                               <i class="fa fa-clock-o"></i>
+                               <%= error.before_event.end_time.strftime("%H:%M:%S") %>
+                               <i class="fa fa-arrows-h"></i>
+                               <i class="fa fa-clock-o"></i>
+                               <%= error.after_event.start_time.strftime("%H:%M:%S") %>
+                               <%= error.msg %> :
+                             </strong>
+                             <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
+                             <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
+                             <%= "#{gap[:seconds]}s" %>
+                             between
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.before_event.name.humanize %></strong>
+                             and
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.after_event.name.humanize %></strong>
+                           <% when ProgramError::ERROR_GAP %>
+                             <strong>
+                               <i class="fa fa-clock-o"></i>
+                               <%= error.before_event.end_time.strftime("%H:%M:%S") %>
+                               <i class="fa fa-arrows-h"></i>
+                               <i class="fa fa-clock-o"></i>
+                               <%= error.after_event.start_time.strftime("%H:%M:%S") %>
+                               <%= error.msg %> :
+                             </strong>
+                             <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
+                             <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
+                             <%= "#{gap[:seconds]}s" %>
+                             between
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.before_event.name.humanize %></strong>
+                             and
+                             <i class="fa fa-play-circle"></i>
+                             <strong><%= error.after_event.name.humanize %></strong>
+                           <% else %>
+                             <strong>
+                               <i class="fa fa-warning"></i>
+                               <%= error.msg %>
+                             </strong>
+                         <% end %>
+                         <em class="pull-right">line <%= error.line %></em>
+                         <div class="clearfix"></div>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
               </div>
@@ -107,85 +171,84 @@
                       <thead>
                         <tr>
                           <th>Program</th>
-                          <th>Start time</th>
+                          <th>Start/End time</th>
                           <td></td>
                           <th>Duration</th>
-                          <td></td>
-                          <th>End time</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <th>
-                            <i class="fa fa-play-circle"></i>
-                            <%= "TURBO".humanize %> 
-                          </th>
-                          <td>
-                            <span class="text-success">
-                              <i class="fa fa-play"></i>
-                              15:12:34
-                            </span>
-                          </td>
-                          <td><i class="fa fa-long-arrow-right"></i></td>
-                          <td>
-                            <span class="text-info">
-                              <i class="fa fa-clock-o"></i>
-                                45:32
-                            </span>
-                          </td>
-                          <td><i class="fa fa-long-arrow-right"></i></td>
-                          <td>
-                            <span class="text-danger">
-                              <i class="fa fa-stop"></i>
-                              15:30:09
-                            </span>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="">
-                            <i class="fa fa-arrows-v"></i>
-                          </td>
-                          </td>
-                          </td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <span class="text-default">
-                              <i class="fa fa-clock-o"></i>
-                              5:32
-                            </span>
-                          </td>
-                          <td></td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <strong>
+                        <% previous_event = Event.new %>
+
+                        <% program.events.each do |event| %>
+
+                          <% duration = TimeDifference.between(event.start_time, event.end_time).in_general %>
+                          <% next_event = program.events.find_by_position(event.position+1) || Event.new %>
+ 
+                          <tr class="<%= previous_event.name == event.name ? "default" : "info" %>">
+                            <th>
                               <i class="fa fa-play-circle"></i>
-                              <%= "REAL HOUSEWIFES".humanize %> 
-                            </strong>
-                          </td>
-                          <td>
-                            <span class="text-success">
-                              <i class="fa fa-play"></i>
-                              15:12:34
-                            </span>
-                          </td>
-                          <td><i class="fa fa-long-arrow-right"></i></td>
-                          <td>
-                            <span class="text-info">
-                              <i class="fa fa-clock-o"></i>
-                                45:32
-                            </span>
-                          </td>
-                          <td><i class="fa fa-long-arrow-right"></i></td>
-                          <td>
-                            <span class="text-danger">
-                              <i class="fa fa-stop"></i>
-                                15:30:09
-                            </span>
-                          </td>
-                        </tr>
+                              <%= event.name.humanize %>  
+                            </th>
+                            <% tag = previous_event.name == event.name ? "td" : "th" %>
+                            <<%= tag %>>
+                              <span class="text-success">
+                                <i class="fa fa-play"></i>
+                                <%= event.start_time.strftime("%H:%M:%S") %>
+                              </span>
+                            </<%= tag %>>
+                            <td><i class="fa fa-long-arrow-right"></i></td>
+                            <td>
+                              <span class="text-info">
+                                <i class="fa fa-clock-o"></i>
+                                <%= "#{duration[:hours]}h" unless duration[:hours].zero?  %>
+                                <%= "#{duration[:minutes]}m" unless duration[:minutes].zero? and duration[:hours].zero? %>
+                                <%= "#{duration[:seconds]}s" %>
+                              </span>
+                            </td>
+                          </tr>
+
+                          <% gap = next_event.start_time.nil? ? nil : TimeDifference.between(event.end_time, next_event.start_time).in_general %>
+
+                          <tr class="<%= next_event.errors.any? ? "alert alert-#{next_event.errors.first.classname}" : "text-muted" %>">
+                            <td>
+                              <% if next_event.errors.empty? %>
+                                <i class="fa fa-arrows-v"></i>
+                              <% else %>
+                                <ul class="no-margins">
+                                  <% next_event.errors.each do |error| %>
+                                    <li>
+                                      <i class="fa fa-warning"></i>
+                                      <strong><%= error.msg %><strong>
+                                    </li>
+                                  <% end %>
+                                </ul>
+                              <% end %>
+                            </td>
+                            </td>
+                            </td>
+                            <% tag = next_event.name != event.name ? "th" : "td" %>
+                            <<%= tag %>>
+                              <span class="text-danger">
+                                <i class="fa fa-stop"></i>
+                                <%= event.end_time.strftime("%H:%M:%S") %>
+                              </span>
+                            </<%= tag %>>
+                            <td></td>
+                            <td>
+                              <% if gap %>
+                                <span class="text-default">
+                                  <i class="fa fa-clock-o"></i>
+                                  <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
+                                  <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
+                                  <%= "#{gap[:seconds]}s" %>
+                                </span>
+                              <% end %>
+                            </td>
+                          </tr>
+
+                          <% previous_event = event %>
+
+                        <% end %>
                       </tbody>
                     </table>
                   </div>
