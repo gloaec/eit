@@ -1,26 +1,46 @@
-<% content_for :title, @channel.name %>
-<% content_for :subtitle, 'Overview' %>
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Name:</strong>
+<% content_for :title do %>
+  <i class="fa fa-desktop"></i> 
   <%= @channel.name %>
-</p>
+<% end %>
 
-<p>
-  <strong>Queue path:</strong>
-  <%= @channel.queue_path %>
-</p>
+<% content_for :subtitle, t(:details) %>
 
-<p>
-  <strong>Success path:</strong>
-  <%= @channel.success_path %>
-</p>
+<% content_for :breadcrumbs do %>
+  <div class="row">
+    <div class="col-xs-10">
+      <ol class="breadcrumb">
+        <li><i class="fa fa-th-list"></i> <%= t :channels %></li>
+        <li class="active"><i class="fa fa-desktop"></i> <%= @channel.name %></li>
+      </ol>
+    </div>
+    <div class="col-xs-2">
+      <a href="<%= edit_channel_path @channel %>" class="btn btn-primary btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :edit, @channel %>">
+      <i class="fa fa-edit"></i>
+      <span class="hidden-xs"><%= t :edit %></span>
+    </a>
+    </div>
+  </div>
+<% end %>
 
-<p>
-  <strong>Error path:</strong>
-  <%= @channel.error_path %>
-</p>
+<ul class="nav nav-tabs" id="myTab">
+  <li class="active">
+    <a href="#programs" data-toggle="tab">
+      <i class="fa fa-th"></i> <%= t :programs %>
+    </a>
+  </li>
+  <li>
+    <a href="#configuration" data-toggle="tab">
+      <i class="fa fa-cogs"></i> <%= t :configuration %>
+    </a>
+  </li>
+</ul>
 
-<%= link_to 'Edit', edit_channel_path(@channel) %> |
-<%= link_to 'Back', channels_path %>
+<div class="tab-content">
+  <div class="tab-pane active" id="programs">
+    <%= render 'programs/calendar', events_source: channel_events_path(@channel, format: :json), programs: @channel.programs %>
+  </div>
+  <div class="tab-pane" id="configuration">
+    <%= render 'channels/configuration', channel: @channel %>
+  </div>
+</div>
+

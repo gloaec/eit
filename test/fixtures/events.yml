@@ -4,8 +4,8 @@ one:
   name: MyString
   description: MyString
   minimum_age: 1
-  start_time: 2014-01-12 12:17:16
-  end_time: 2014-01-12 12:17:16
+  start_at: 2014-01-12 12:17:16
+  end_at: 2014-01-12 12:17:16
   position: 1
   program_id: 
 
@@ -13,7 +13,7 @@ two:
   name: MyString
   description: MyString
   minimum_age: 1
-  start_time: 2014-01-12 12:17:16
-  end_time: 2014-01-12 12:17:16
+  start_at: 2014-01-12 12:17:16
+  end_at: 2014-01-12 12:17:16
   position: 1
   program_id: 

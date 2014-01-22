@@ -22,11 +22,17 @@ class FtpsController < ApplicationController
   def edit
   end
 
+  # POST /ftps/ping.json
+  def ping
+	  p ftp_params.inspect
+    @ftp = Ftp.new(ftp_params)
+    return @ftp.ping?
+  end
+
   # POST /ftps
   # POST /ftps.json
   def create
     @ftp = Ftp.new(ftp_params)
-
     respond_to do |format|
       if @ftp.save
         format.html { redirect_to @ftp, notice: 'Ftp was successfully created.' }
@@ -70,6 +76,6 @@ class FtpsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def ftp_params
-      params.require(:ftp).permit(:host, :post, :user, :password_digest, :root_path, :channel)
+      params.require(:ftp).permit(:host, :port, :user, :password, :root_path, :channel)
     end
 end

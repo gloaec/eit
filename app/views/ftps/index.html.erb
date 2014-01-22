@@ -4,9 +4,8 @@
   <thead>
     <tr>
       <th>Host</th>
-      <th>Post</th>
+      <th>Port</th>
       <th>User</th>
-      <th>Password digest</th>
       <th>Root path</th>
       <th>Channel</th>
       <th></th>
@@ -19,9 +18,8 @@
     <% @ftps.each do |ftp| %>
       <tr>
         <td><%= ftp.host %></td>
-        <td><%= ftp.post %></td>
+        <td><%= ftp.port %></td>
         <td><%= ftp.user %></td>
-        <td><%= ftp.password_digest %></td>
         <td><%= ftp.root_path %></td>
         <td><%= ftp.channel %></td>
         <td><%= link_to 'Show', ftp %></td>

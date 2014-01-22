@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.0.1'
 gem 'sqlite3'
+gem 'mysql2'
 gem 'sass-rails', '~> 4.0.0'
 gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
@@ -9,7 +10,9 @@ gem 'devise'
 gem 'cancan'
 gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails'
+gem 'underscore-rails'
 gem 'bootstrap-sass', '~> 3.0.0'
+gem 'bootstrap-datetimepicker-rails'
 gem 'font-awesome-rails', '~> 4.0.0'
 gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
@@ -19,6 +22,7 @@ gem 'nokogiri'
 gem 'time_difference'
 gem 'paperclip'
 gem 'momentjs-rails'
+gem 'aescrypt'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

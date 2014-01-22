@@ -4,8 +4,8 @@ class CreateEvents < ActiveRecord::Migration
       t.string :name
       t.string :description
       t.integer :minimum_age
-      t.datetime :start_time
-      t.datetime :end_time
+      t.datetime :start_at
+      t.datetime :end_at
       t.integer :position
       t.references :program, index: true
 

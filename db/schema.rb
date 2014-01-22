@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140112131053) do
+ActiveRecord::Schema.define(version: 20140119182345) do
 
   create_table "channels", force: true do |t|
     t.string   "name"
@@ -43,6 +43,11 @@ ActiveRecord::Schema.define(version: 20140112131053) do
   add_index "channels_contacts", ["channel_id"], name: "index_channels_contacts_on_channel_id"
   add_index "channels_contacts", ["user_id"], name: "index_channels_contacts_on_user_id"
 
+  create_table "channels_ftps", id: false, force: true do |t|
+    t.integer "channel_id", null: false
+    t.integer "ftp_id",     null: false
+  end
+
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"
     t.integer  "user_id"
@@ -57,8 +62,8 @@ ActiveRecord::Schema.define(version: 20140112131053) do
     t.string   "name"
     t.string   "description"
     t.integer  "minimum_age"
-    t.datetime "start_time"
-    t.datetime "end_time"
+    t.datetime "start_at"
+    t.datetime "end_at"
     t.integer  "position"
     t.integer  "program_id"
     t.datetime "created_at"
@@ -69,10 +74,11 @@ ActiveRecord::Schema.define(version: 20140112131053) do
 
   create_table "ftps", force: true do |t|
     t.string   "host"
-    t.integer  "post"
-    t.string   "user",               default: "", null: false
-    t.string   "encrypted_password", default: "", null: false
+    t.integer  "port"
+    t.string   "user",                             default: "", null: false
+    t.binary   "password_digest", limit: 10485760
     t.string   "root_path"
+    t.boolean  "passive"
     t.integer  "channel_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -95,8 +101,8 @@ ActiveRecord::Schema.define(version: 20140112131053) do
   add_index "program_errors", ["program_id"], name: "index_program_errors_on_program_id"
 
   create_table "programs", force: true do |t|
-    t.datetime "start_time"
-    t.datetime "end_time"
+    t.datetime "start_at"
+    t.datetime "end_at"
     t.integer  "channel_id"
     t.datetime "created_at"
     t.datetime "updated_at"

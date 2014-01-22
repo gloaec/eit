@@ -1,7 +1,17 @@
 class ChannelsController < ApplicationController
   before_filter :authenticate_user!
   load_and_authorize_resource
-  before_action :set_channel, only: [:show, :edit, :update, :destroy]
+  skip_authorize_resource :only => :events
+  before_action :set_channel, only: [:show, :edit, :update, :destroy, :events]
+
+  # GET /events.json
+  def events
+    from = Time.at(params[:from].to_i/1000)
+    to = Time.at(params[:to].to_i/1000)
+    @programs = @channel.programs.where(
+      start_at: from.beginning_of_day..to.end_of_day
+    )
+  end
 
   # GET /channels
   # GET /channels.json
@@ -65,7 +75,7 @@ class ChannelsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_channel
-      @channel = Channel.find(params[:id])
+      @channel = Channel.find(params[:id] || params[:channel_id])
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

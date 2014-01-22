@@ -1,20 +1,42 @@
 NrjEit::Application.routes.draw do
-  get "users/index"
-  get "users/new"
-  get "users/create"
-  get "users/edit"
-  get "users/update"
-  get "users/delete"
-  devise_for :users
-  resources :channels
+  #get "programs/index"
+  #get "programs/show"
+  #get "users/index"
+  #get "users/new"
+  #get "users/create"
+  #get "users/edit"
+  #get "users/update"
+  #get "users/delete"
 
-  resources :ftps
+
+  devise_for :users
+
+  resources :channels do
+    get "events"
+    resources :programs
+    resources :ftps
+  end
+
+  resources :ftps do
+    post "ping"
+  end
+
+  resources :users
+
+  get "programs/events"
+
+  resources :programs do
+    get "events"#, on: :collection
+  end
+
+  resources :events, only: [:edit]
+ 
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-  root 'channels#index'
+  root 'programs#index'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

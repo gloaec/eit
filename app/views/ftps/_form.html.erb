@@ -1,41 +1,80 @@
-<%= form_for(@ftp) do |f| %>
-  <% if @ftp.errors.any? %>
+<%= form_for(ftp, html: { id: "ftp_form" }) do |f| %>
+
+  <% if ftp.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@ftp.errors.count, "error") %> prohibited this ftp from being saved:</h2>
+      <h2><%= pluralize(ftp.errors.count, "error") %> prohibited this ftp from being saved:</h2>
 
       <ul>
-      <% @ftp.errors.full_messages.each do |msg| %>
+      <% ftp.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :host %><br>
-    <%= f.text_field :host %>
+
+  <div class="form-group">
+    <%= f.label :user, class: 'control-label col-sm-3' %>
+    <div class="col-sm-9">
+      <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+        <%= f.text_field :user, class: 'form-control' %>
+      </div>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :post %><br>
-    <%= f.number_field :post %>
+  <div class="form-group">
+    <%= f.label :password, class: 'control-label col-sm-3' %>
+    <div class="col-sm-9">
+      <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+        <%= f.password_field :password, class: 'form-control' %>
+      </div>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :user %><br>
-    <%= f.text_field :user %>
+  <div class="form-group">
+    <%= f.label :host, 'Host:Port', class: 'control-label col-sm-3' %>
+    <div class="col-sm-9">
+      <div class="input-group">
+	  <span class="input-group-addon">@</span>
+          <%= f.text_field :host, class: 'form-control' %>
+	  <span class="input-group-addon">:</span>
+          <%= f.number_field :port, class: 'form-control', size: 5 %>
+	</span>
+      </div>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :password_digest %><br>
-    <%= f.text_field :password_digest %>
+  <div class="form-group">
+    <%= f.label :root_path, class: 'control-label col-sm-3' %>
+    <div class="col-sm-9">
+      <%= f.text_field :root_path, class: 'form-control' %>
+    </div>
   </div>
-  <div class="field">
-    <%= f.label :root_path %><br>
-    <%= f.text_field :root_path %>
+  <div class="form-group">
+    <%= f.label :passive, class: 'control-label col-sm-3' do %>Mode<% end %>
+    <div class="col-sm-9">
+      <div class="btn-group">
+        <button type="button" class="btn btn-default btn-mode" value="1"><%= t :active %></button>
+        <button type="button" class="btn btn-default btn-mode" value="0"><%= t :passive %></button>
+      </div>
+    </div>
+    <%= f.check_box :passive, class: 'hidden' %>
+    <script type="text/javascript">
+    (function($){
+      
+      $('.btn-mode').each(function(){
+        if ($(this).val() == "1" && $('#passive').is(':checked') ||
+            $(this).val() == "0" && !$('#passive').is(':checked') ){
+          $(this).addClass('active');
+        }
+      })
+      .click(function(){
+        $('#passive').prop('checked', $(this).val() == "1");
+        $('.btn-mode').removeClass('active');
+        $(this).addClass('active');
+      });
+
+    }(jQuery));
+    </script>
   </div>
-  <div class="field">
-    <%= f.label :channel %><br>
-    <%= f.text_field :channel %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
 <% end %>

@@ -12,17 +12,35 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require underscore
 //= require turbolinks
 //= require bootstrap
+//= require bootstrap-datetimepicker
+//= require locales/bootstrap-datetimepicker.fr
 //= require moment
 //= require_tree .
 
-$(function(){
+(function($){
 
-  $('.time').each(function(){
-    var datetime = new Date($(this).data('datetime'));
-    console.log($(this).data('datetime'), datetime);
-    $(this).text(moment(datetime).fromNow());
+  "use strict";
+
+  $(document).on('page:change', function(){
+
+    $('.time').each(function(){
+      var datetime = new Date($(this).data('datetime'));
+      $(this).text(moment(datetime).format('HH:MM:SS'));
+    });
+
+    $('.timeago').each(function(){
+      var datetime = new Date($(this).data('datetime'));
+      $(this).text(moment(datetime).fromNow());
+    });
+
+    $('.date').each(function(){
+      var datetime = new Date($(this).data('datetime'));
+      $(this).text(moment(datetime).format('LL'));
+    });
+
   });
 
-});
+}(jQuery));

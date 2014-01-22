@@ -10,6 +10,12 @@ class Ability
          can :read, Channel do |channel|
            channel.users.include? user
          end
+	 can :read, Program do |program|
+	   can? :read, program.channel
+	 end
+	 can :read, Event do |event|
+           can? :read, event.program
+	 end
        end
        if user.role? :admin
          can :manage, Channel do |channel|

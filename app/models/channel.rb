@@ -6,4 +6,6 @@ class Channel < ActiveRecord::Base
   has_many :channel_contacts, class_name: 'ChannelContact'
   has_many :contacts, through: :channel_contacts, source: :user
   has_many :programs
+
+  accepts_nested_attributes_for :ftps, :allow_destroy => true
 end

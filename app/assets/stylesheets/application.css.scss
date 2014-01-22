@@ -9,11 +9,31 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require bootstrap
+ *= require bootstrap-datetimepicker
  *= require font-awesome
  *= require ./sb-admin
  *= require_self
  *= require_tree .
  */
+
+@import "bootstrap/variables";
+
+.label-0 { background-color: #632A17; }
+.label-1 { background-color: #BFA024; }
+.label-2 { background-color: #E62240; }
+.label-3 { background-color: #A00030; }
+.label-4 { background-color: #D17399; }
+
+.label-5 { background-color: #859731; }
+.label-6 { background-color: #A3AF9B; }
+.label-7 { background-color: #5D4157; }
+.label-8 { background-color: #A96471; }
+.label-9 { background-color: #AB8860; }
+
+.event .label { padding: 0 0.2em; }
+.event .label.event-important  { border: 2px solid #D43F3A; }
+.event .label.event-warning { border: 2px solid #EEA236; }
+.event .label.event-success { border: 2px solid #4CAE4C; }
 
 .modal-content > .alert {
   margin: 0;
@@ -21,8 +41,6 @@
   -webkit-border-bottom-left-radius: 0;
   -moz-border-radius-bottomright: 0;
   -moz-border-radius-bottomleft: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
 }
 
 .visible {
@@ -48,7 +66,15 @@
   margin: 0;
 }
 
-.panel-heading .label {
+.top10 {
+  margin-top: 10px;
+}
+.top20 {
+  margin-top: 20px;
+}
+
+.panel-heading .label,
+.nav li a .label {
   font-size: 10.5px;
   vertical-align: middle;
   margin-top: 10px;
@@ -61,7 +87,7 @@
   vertical-align: middle;
 }
 
-.panel-heading a {
+.panel-heading a:not(.btn) {
   color: inherit;
 }
 
@@ -76,9 +102,16 @@
 }
 
 
+span.hidden-sm { display: inline !important; }
 span.hidden-xs { display: inline !important; }
 
-@media (max-width: 767px) {
+@media (max-width: $screen-sm-max) {
+  span.hidden-sm {
+      display: none !important;
+  }
+}
+
+@media (max-width: $screen-xs-max) {
   span.hidden-xs {
       display: none !important;
   }

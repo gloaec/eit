@@ -49,35 +49,36 @@ contact2 = User.create!({
 # Channels
 
 channel1 = Channel.create({
-  name:         "Channel 1",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/channel1/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/channel1/success",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/channel1/error"
+  name:         "NRJ Paris",
+  queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/pending",
+  success_path: "/home/ghis/Workspace/nrj-eit/data/NRJParis/success",
+  error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/error"
 })
 
 channel2 = Channel.create({
-  name:         "Channel 2",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/channel2/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/channel2/success",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/channel2/error"
+  name:         "NRJ 12",
+  queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/pending",
+  success_path: "/home/ghis/Workspace/nrj-eit/data/NRJ12/success",
+  error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/error"
 })
 
 channel3 = Channel.create({
-  name:         "Channel 3",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/channel3/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/channel3/success",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/channel3/error"
+  name:         "Chérie 25",
+  queue_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/pending",
+  success_path: "/home/ghis/Workspace/nrj-eit/data/Cherie25/success",
+  error_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/error"
 })
 
 
 # Ftps
 
 ftp1 = Ftp.create({
-  host:            "localhost",
-  post:            23,
-  user:            "ghis",
+  host:            "ftpperso.free.fr",
+  port:            21,
+  user:            "ghis182",
   password:        "turtoise",
-  root_path:       "$HOME"
+  passive:         false,
+  root_path:       ""
 })
 
 channel1.admins << admin

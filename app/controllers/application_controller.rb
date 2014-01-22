@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :set_channels
 
+
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to root_url, :alert => exception.message
   end
