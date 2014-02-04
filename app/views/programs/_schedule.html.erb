@@ -42,13 +42,13 @@
 
       <% gap = next_event.end_at.nil? ? nil : TimeDifference.between(event.end_at, next_event.start_at).in_general %>
 
-      <tr class="<%= next_event.errors.any? ? "alert alert-#{next_event.errors.first.classname}" : "text-muted" %>">
+      <tr class="<%= next_event.program_errors.any? ? "alert alert-#{next_event.program_errors.first.classname}" : "text-muted" %>">
         <td>
-          <% if next_event.errors.empty? %>
+          <% if next_event.program_errors.empty? %>
             <i class="fa fa-arrows-v"></i>
           <% else %>
             <ul class="no-margins">
-              <% next_event.errors.each do |error| %>
+              <% next_event.program_errors.each do |error| %>
                 <li>
                   <i class="fa fa-warning"></i>
                   <strong><%= error.msg %><strong>

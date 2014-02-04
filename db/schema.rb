@@ -11,14 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140119182345) do
+ActiveRecord::Schema.define(version: 20140201150444) do
 
   create_table "channels", force: true do |t|
     t.string   "name"
     t.string   "queue_path"
-    t.string   "success_path"
     t.string   "error_path"
-    t.string   "ftp_path"
+    t.integer  "max_duration_error",   default: 0
+    t.integer  "max_gap_error",        default: 0
+    t.integer  "max_duration_warning", default: 0
+    t.integer  "max_gap_warning",      default: 0
+    t.integer  "min_duration_error",   default: 0
+    t.integer  "min_gap_error",        default: 0
+    t.integer  "min_duration_warning", default: 0
+    t.integer  "min_gap_warning",      default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -43,10 +49,14 @@ ActiveRecord::Schema.define(version: 20140119182345) do
   add_index "channels_contacts", ["channel_id"], name: "index_channels_contacts_on_channel_id"
   add_index "channels_contacts", ["user_id"], name: "index_channels_contacts_on_user_id"
 
-  create_table "channels_ftps", id: false, force: true do |t|
-    t.integer "channel_id", null: false
-    t.integer "ftp_id",     null: false
+  create_table "channels_ftps", force: true do |t|
+    t.integer "channel_id"
+    t.integer "ftp_id"
+    t.string  "success_path"
   end
+
+  add_index "channels_ftps", ["channel_id"], name: "index_channels_ftps_on_channel_id"
+  add_index "channels_ftps", ["ftp_id"], name: "index_channels_ftps_on_ftp_id"
 
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"
@@ -77,7 +87,6 @@ ActiveRecord::Schema.define(version: 20140119182345) do
     t.integer  "port"
     t.string   "user",                             default: "", null: false
     t.binary   "password_digest", limit: 10485760
-    t.string   "root_path"
     t.boolean  "passive"
     t.integer  "channel_id"
     t.datetime "created_at"

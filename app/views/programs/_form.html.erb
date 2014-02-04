@@ -1,0 +1,90 @@
+<%= form_for program do |f| %>
+
+  <table class="table table-condensed table-striped no-margins">
+    <thead>
+      <tr>
+        <th>Program</th>
+        <th>Start/End time</th>
+        <td></td>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% previous_event = Event.new %>
+      
+      <%= f.fields_for :events do |ff| %>
+      
+        <% event = ff.object %>
+        <% duration = TimeDifference.between(event.start_at, event.end_at).in_general %>
+        <% next_event = program.events.find_by_position(event.position+1) || Event.new %>
+  
+        <tr class="<%= previous_event.name == event.name ? "default" : "info" %>">
+          <th>
+		  <i class="fa fa-play-circle"></i><%#= ff.text_field nil  %>
+	    <%= text_field_tag :name => :name, class: "form-control" %>
+          </th>
+          <% tag = previous_event.name == event.name ? "td" : "th" %>
+          <<%= tag %>>
+            <span class="text-success">
+              <i class="fa fa-play"></i>
+              <%= event.start_at.strftime("%H:%M:%S") %>
+            </span>
+          </<%= tag %>>
+          <td><i class="fa fa-long-arrow-right"></i></td>
+          <td>
+            <span class="text-info">
+              <i class="fa fa-clock-o"></i>
+              <%= "#{duration[:hours]}h" unless duration[:hours].zero?  %>
+              <%= "#{duration[:minutes]}m" unless duration[:minutes].zero? and duration[:hours].zero? %>
+              <%= "#{duration[:seconds]}s" %>
+            </span>
+          </td>
+        </tr>
+  
+        <% gap = next_event.end_at.nil? ? nil : TimeDifference.between(event.end_at, next_event.start_at).in_general %>
+  
+        <tr class="<%= next_event.dangers.any? ? "alert alert-#{next_event.dangers.first.classname}" : "text-muted" %>">
+          <td>
+            <% if next_event.dangers.empty? %>
+              <i class="fa fa-arrows-v"></i>
+            <% else %>
+              <ul class="no-margins">
+                <% next_event.dangers.each do |error| %>
+                  <li>
+                    <i class="fa fa-warning"></i>
+                    <strong><%= error.msg %><strong>
+                  </li>
+                <% end %>
+              </ul>
+            <% end %>
+          </td>
+          </td>
+          </td>
+          <% tag = next_event.name != event.name ? "th" : "td" %>
+          <<%= tag %>>
+            <span class="text-danger">
+              <i class="fa fa-stop"></i>
+              <%= event.end_at.strftime("%H:%M:%S") %>
+            </span>
+          </<%= tag %>>
+          <td></td>
+          <td>
+            <% if gap %>
+              <span class="text-default">
+                <i class="fa fa-clock-o"></i>
+                <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
+                <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
+                <%= "#{gap[:seconds]}s" %>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+
+        <% previous_event = event %>
+  
+      <% end %>
+    </tbody>
+  </table>
+
+
+<% end %>

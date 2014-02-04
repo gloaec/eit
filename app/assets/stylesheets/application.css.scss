@@ -18,6 +18,8 @@
 
 @import "bootstrap/variables";
 
+.hidden-row {padding: 0 !important; }
+
 .label-0 { background-color: #632A17; }
 .label-1 { background-color: #BFA024; }
 .label-2 { background-color: #E62240; }
@@ -82,7 +84,7 @@
 
 
 .panel-heading .pull-right {
-  font-size: 16px;
+ /* font-size: 16px;*/
   line-height: 1.1;
   vertical-align: middle;
 }

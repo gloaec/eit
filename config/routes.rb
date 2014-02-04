@@ -17,6 +17,8 @@ NrjEit::Application.routes.draw do
     resources :ftps
   end
 
+  post "ftps/ping"
+
   resources :ftps do
     post "ping"
   end
@@ -27,6 +29,7 @@ NrjEit::Application.routes.draw do
 
   resources :programs do
     get "events"#, on: :collection
+    post "transfer"
   end
 
   resources :events, only: [:edit]

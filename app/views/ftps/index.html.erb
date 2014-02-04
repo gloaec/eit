@@ -1,35 +1,82 @@
-<h1>Listing ftps</h1>
+<% content_for :title do %>
+  <i class="fa fa-sitemap"></i> 
+  FTP Servers
+<% end %>
+<% content_for :subtitle, 'Overview' %>
+<% content_for :breadcrumbs do %>
+  <div class="row">
+    <div class="col-md-10">
+    <ol class="breadcrumb">
+      <li><a href="<%= root_url %>"><i class="fa fa-home"></i> Home</a></li>
+      <li class="active"><i class="fa fa-sitemap"></i> Ftp Servers</li>
+    </ol>
+    </div>
+    <div class="col-md-2">
+    <a href="<%= new_ftp_path %>" class="btn btn-success btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :create, Ftp %>">
+      <i class="fa fa-plus"></i>
+      New FTP
+    </a>
+    </div>
+  </div>
+<% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Host</th>
-      <th>Port</th>
-      <th>User</th>
-      <th>Root path</th>
-      <th>Channel</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @ftps.each do |ftp| %>
-      <tr>
-        <td><%= ftp.host %></td>
-        <td><%= ftp.port %></td>
-        <td><%= ftp.user %></td>
-        <td><%= ftp.root_path %></td>
-        <td><%= ftp.channel %></td>
-        <td><%= link_to 'Show', ftp %></td>
-        <td><%= link_to 'Edit', edit_ftp_path(ftp) %></td>
-        <td><%= link_to 'Destroy', ftp, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Ftp', new_ftp_path %>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Host</th>
+          <th>Port</th>
+          <th>User</th>
+          <th>Passive mode</th>
+          <th></th>
+        </tr>
+      </thead>
+    
+      <tbody>
+        <% @ftps.each do |ftp| %>
+          <tr>
+            <td>
+              <i class="fa fa-sitemap"></i>
+	      <%= ftp.host %>
+            </td>
+            <td><%= ftp.port %></td>
+            <td><%= ftp.user %></td>
+	    <td>
+              <% if ftp.passive %>
+                <i class="fa fa-check"></i>
+		<span class="hidden-xs">
+                  Enabled
+                </span>
+              <% else %>
+                <i class="fa fa-times"></i>
+		<span class="hidden-xs">
+		  Disabled
+                </span>
+              <% end %>
+            </td>
+	    <td>
+              <span class="btn-group pull-right">
+                <% if can? :read, ftp %>
+                  <a href="<%= ftp_path(ftp) %>" class="btn btn-primary btn-sm">
+                    <i class="fa fa-arrow-right"></i><span class="hidden-xs"> Show</i>
+                  </a>
+                <% end %>
+                <% if can? :edit, ftp %>
+                  <a href="<%= edit_ftp_path(ftp) %>" class="btn btn-primary btn-sm">
+                    <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
+                  </a>
+                <% end %>
+                <% if can? :destroy, ftp %>
+                  <%= link_to ftp, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' do %>
+                    <i class="fa fa-trash-o"></i><span class="hidden-xs"> Delete</span>
+                  <% end %>
+                <% end %>
+              </span>
+	    </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

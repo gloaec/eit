@@ -28,7 +28,7 @@
         
       program_class = 
          if    program.new_record? then "default"
-         elsif program.errors.any? then "danger"
+         elsif program.dangers.any? then "danger"
          else "success" end
     %>
       <div class="col-lg-12">
@@ -75,15 +75,11 @@
                       XML
                     </h3>
 		    <span class="pull-right">
-		      <% program_warnings = program.errors.where(:classname => 'warning') %>
-		      <% program_errors   = program.errors.where(:classname => 'danger') %>
-                      <% if program_warnings.any? %>
-                        <span class="label label-warning"><i class="fa fa-warning"></i> <%= program_warnings.count %></span>
+                      <% if program.warnings.any? %>
+                        <span class="label label-warning"><i class="fa fa-warning"></i> <%= program.warnings.count %></span>
 	              <% end %>
-		      <% if program_errors.any? %>
-                        <% if program_errors.any? %>
-                          <span class="label label-danger"><i class="fa fa-warning"></i> <%= program_errors.count %></span>
-	                <% end %>
+		      <% if program.dangers.any? %>
+                        <span class="label label-danger"><i class="fa fa-warning"></i> <%= program.dangers.count %></span>
                       <% elsif !program.new_record? %>
                         <span class="label label-success"><i class="fa fa-check"></i></span>
                       <% end %>
@@ -92,8 +88,8 @@
                 </div>
                 <div id="collapse_xml<%= channel.id %>" class="panel-collapse collapse">
                   <div class="panel-body">
-                    <% program.errors.each do |error| %>
-                      <div class="alert alert-<%= error.classname %> <%= "no-margins" if error == program.errors.last %>">
+                    <% program.program_errors.each do |error| %>
+                      <div class="alert alert-<%= error.classname %> <%= "no-margins" if error == program.program_errors.last %>">
                         <% gap = TimeDifference.between(error.before_event.end_at, error.after_event.end_at).in_general unless
                             error.before_event.nil? or error.after_event.nil? %>
                          <% case error.code.to_i %>
@@ -219,13 +215,13 @@
 
                           <% gap = next_event.end_at.nil? ? nil : TimeDifference.between(event.end_at, next_event.end_at).in_general %>
 
-                          <tr class="<%= next_event.errors.any? ? "alert alert-#{next_event.errors.first.classname}" : "text-muted" %>">
+                          <tr class="<%= next_event.program_errors.any? ? "alert alert-#{next_event.program_errors.first.classname}" : "text-muted" %>">
                             <td>
-                              <% if next_event.errors.empty? %>
+                              <% if next_event.program_errors.empty? %>
                                 <i class="fa fa-arrows-v"></i>
                               <% else %>
                                 <ul class="no-margins">
-                                  <% next_event.errors.each do |error| %>
+                                  <% next_event.program_errors.each do |error| %>
                                     <li>
                                       <i class="fa fa-warning"></i>
                                       <strong><%= error.msg %><strong>
@@ -286,10 +282,6 @@
                         <tr>
                           <th>Queue path</th>
                           <td><code class="ww"><%= channel.queue_path %></code></td>
-                        </tr>
-                        <tr>
-                          <th>Success path</th>
-                          <td><code class="ww"><%= channel.success_path %></code></td>
                         </tr>
                         <tr>
                           <th>Error path</th>

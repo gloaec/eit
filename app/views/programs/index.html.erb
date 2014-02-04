@@ -10,7 +10,6 @@
     </ol>
 <% end %>
 
-
 <ul class="nav nav-tabs" id="myTab">
   <li class="active">
     <a href="#programs" data-toggle="tab">
@@ -18,8 +17,8 @@
     </a>
   </li>
   <li>
-    <a href="#configuration" data-toggle="tab">
-      <i class="fa fa-cogs"></i> <%= t :configuration %>
+    <a href="#pending" data-toggle="tab">
+      <i class="fa fa-warning"></i> <%= t :pending_programs %>
     </a>
   </li>
 </ul>
@@ -28,58 +27,7 @@
   <div class="tab-pane active" id="programs">
     <%= render 'programs/calendar', events_source: programs_events_path, programs: @programs %>
   </div>
-  <div class="tab-pane" id="configuration">
+  <div class="tab-pane" id="pending">
+    <%= render 'programs/pending', programs: @programs %>
   </div>
-</div>
-
-
-
-
-
-<div class="row">
-    <% @programs.each do |day, programs| %>
-      <div class="col-lg-12">
-        <h2>
-          <i class="fa fa-calendar"></i>
-          <span class="date" data-datetime="<%= day.iso8601 %>"></span>
-        </h2>
-        <div class="panel-group" id="accordion<%= day.to_i %>">
-          <% programs.each do |program| %>
-            <div class="panel panel-<%= program_class(program) %>">
-              <div class="panel-heading clearfix">
-                <a data-toggle="collapse" data-parent="#accordion<%= day.to_i %>" href="#collapse_xml<%= program.id %>">
-                  <h3 class="panel-title pull-left">
-                      <i class="fa fa-file"></i>
-                      <%= program.xml_file_name %>
-                    <span class="label label-primary">      
-                      <i class="fa fa-desktop"></i>
-                      <%= program.channel.name %>
-                    </span>
-                    <% unless program.start_at.nil? %>
-                      <span class="label label-info">      
-                        <i class="fa fa-calendar"></i>
-                        <%= program.start_at.strftime("%d/%m/%y") %>
-                      </span>
-                    <% end %>
-                  </h3>
-                  <span class="pull-right">
-                    <% if program.errors.any? %>
-                      <span class="label label-danger"><i class="fa fa-warning"></i> <%= program.errors.where(:classname => 'danger').count %></span>
-                      <span class="label label-warning"><i class="fa fa-warning"></i> <%= program.errors.where(:classname => 'warning').count %></span>
-                    <% elsif !program.new_record?%>
-                      <span class="label label-success"><i class="fa fa-check"></i></span>
-                    <% end %>
-                  </span>
-                </a>
-              </div>
-              <div id="collapse_xml<%= program.id %>" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <%= render 'errors', program: program %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
 </div>

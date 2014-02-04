@@ -9,8 +9,8 @@
           </h4>
         </div>
 	<div class="modal-body">
-          <%= f.fields_for :ftps, f.object.ftps.build do |ff| %>
-            
+          <%= f.fields_for :channel_ftps, f.object.ftps.build do |ff| %>
+            <%#= ff.fields_for :ftp do |fff| %>
             <div class="form-group">
               <%= ff.label :user, class: 'control-label col-sm-3' %>
               <div class="col-sm-9">
@@ -42,9 +42,13 @@
               </div>
             </div>
             <div class="form-group">
-              <%= ff.label :root_path, class: 'control-label col-sm-3' %>
+              <%= ff.label :success_path, t(:success_path), class: 'control-label col-sm-3' %>
               <div class="col-sm-9">
-                <%= ff.text_field :root_path, class: 'form-control' %>
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-folder-o"></i></span>
+                    <%= ff.text_field :success_path, class: 'form-control' %>
+                  </span>
+                </div>
               </div>
             </div>
             <div class="form-group">
@@ -57,11 +61,11 @@
               </div>
               <%= ff.check_box :passive, class: 'hidden' %>
 	      <div class="col-sm-3">
-  	      <button onclick="$('#channel_form').submit(); return false;" data-loading-text="Loading..." type="button" class="btn btn-primary btn-ping">
+  	      <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-primary btn-ping">
                 <i class="fa fa-signal"></i>
   	        <%= t :ping_ftp %>
   	      </button>
-      </div>
+              </div>
             </div>
 
           <% end %>
@@ -81,10 +85,10 @@
 <script type="text/javascript">
   (function($){
 
-    $("#channel_form").on('submit', function(e){
+    $("#ping_ftp").on('click', function(e){
       $('.btn-ping').button('loading');	    
       e.preventDefault();
-      var $form = $(this);
+      var $form = $("#channel_form");
       $.post("<%= ftps_ping_path(format: :json) %>", { 
         action: "ping",
         ftp: {
@@ -117,7 +121,16 @@
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
       });
+      setTimeout(function(){
+        $('.btn-ping')
+        .button('reset').empty()
+        .removeClass('btn-success btn-danger')
+        .addClass('btn-primary')
+        .append($('<i>').addClass('fa fa-signal'))
+        .append(' Ping Ftp');
+      }, 3000);
     });
+
     $('.btn-mode').each(function(){
       if ($(this).val() == "1" && $('#passive').is(':checked') ||
           $(this).val() == "0" && !$('#passive').is(':checked') ){
@@ -129,5 +142,6 @@
       $('.btn-mode').removeClass('active');
       $(this).addClass('active');
     });
+
   }(jQuery));
 </script>

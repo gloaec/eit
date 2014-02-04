@@ -2,7 +2,7 @@ class ProgramsController < ApplicationController
   before_filter :authenticate_user!
   load_and_authorize_resource
   skip_authorize_resource :only => :events
-  before_action :set_program, only: [:show, :edit, :update, :destroy]
+  before_action :set_program, only: [:show, :edit, :update, :destroy, :transfer]
   before_action :set_programs, only: [:index]
 
   # GET /events.json
@@ -12,6 +12,12 @@ class ProgramsController < ApplicationController
     @programs = Program
     .where(start_at: from.beginning_of_day..to.end_of_day)
     .select {|_| can?(:read, _)}
+  end
+
+  # POST /programs/1/transfer
+  def transfer
+    @program.transfer
+    format.html { redirect_to @program, notice: 'Program was successfully transferred.' }
   end
 
   # GET /programs
@@ -82,8 +88,8 @@ class ProgramsController < ApplicationController
     def set_programs
       @programs = Program
       .order(created_at: :desc)
-      .select {|_| can?(:read, _)}
-      .group_by{ |u| u.created_at.beginning_of_day }
+      .select {|_| can?(:read, _) and _.dangers.any? }
+      #.group_by{ |u| u.created_at.beginning_of_day }
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

@@ -1,10 +1,12 @@
 <div class="top20">
-  <% program.errors.each do |error| %>
-    <div class="alert alert-<%= error.classname %> <%= "no-margins" if error == program.errors.last %>">
+  <% program.program_errors.each do |error| %>
+    <div class="alert alert-<%= error.classname %> <%= "no-margins" if false and error == program.dangers.last %>">
       <% gap = TimeDifference.between(error.before_event.end_at, error.after_event.start_at).in_general unless
           error.before_event.nil? or error.after_event.nil? %>
+
        <% case error.code.to_i %>
-         <% when ProgramError::NO_GAP %>
+         <% when ProgramError::GAP_ERROR %>
+
            <strong>
              <i class="fa fa-clock-o"></i>
              <%= error.before_event.end_at.strftime("%H:%M:%S") %>
@@ -16,7 +18,9 @@
            and
            <i class="fa fa-play-circle"></i>
            <strong><%= error.after_event.name.humanize %></strong>
-         <% when ProgramError::WARNING_GAP %>
+
+         <% when ProgramError::GAP_WARNING %>
+
            <strong>
              <i class="fa fa-clock-o"></i>
              <%= error.before_event.end_at.strftime("%H:%M:%S") %>
@@ -34,7 +38,9 @@
            and
            <i class="fa fa-play-circle"></i>
            <strong><%= error.after_event.name.humanize %></strong>
-         <% when ProgramError::ERROR_GAP %>
+
+         <% when ProgramError::FILE %>
+
            <strong>
              <i class="fa fa-clock-o"></i>
              <%= error.before_event.end_at.strftime("%H:%M:%S") %>
@@ -52,12 +58,16 @@
            and
            <i class="fa fa-play-circle"></i>
            <strong><%= error.after_event.name.humanize %></strong>
+
          <% else %>
+
            <strong>
              <i class="fa fa-warning"></i>
              <%= error.msg %>
            </strong>
+
        <% end %>
+
        <em class="pull-right">line <%= error.line %></em>
        <div class="clearfix"></div>
     </div>

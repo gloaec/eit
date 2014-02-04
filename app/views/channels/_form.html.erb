@@ -24,12 +24,6 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :success_path, class: "col-sm-3 control-label" %>
-    <div class="col-sm-9">
-      <%= f.text_field :success_path, class: "form-control" %>
-    </div>
-  </div>
-  <div class="form-group">
     <%= f.label :error_path, class: "col-sm-3 control-label" %>
     <div class="col-sm-9">
       <%= f.text_field :error_path, class: "form-control" %>
@@ -37,30 +31,40 @@
   </div>
 
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title pull-left">
             <i class="fa fa-upload"></i>
             FTP Transfert
           </h3>
+          <div class="pull-right">
           <a href="#" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#ftp_modal">
             <i class="fa fa-plus"></i>
+            <span class="hidden-xs"><%= t :add_ftp %></span>
 	  </a>
+          </div>
 	  <div class="clearfix"></div>
         </div>
         <div class="panel-body">
           <table class="table table-striped table-condensed no-margins">
             <tbody>
-              <% ['ftp1.nrj.fr','ftp2.nrj.fr','ftp3.nrj.fr'].each do |ftp| %>
+              <% @channel.channel_ftps.each do |cf| %>
+                <% ftp = cf.ftp %>
                 <tr>
                   <td>
-                  <i class="fa fa-sitemap"></i>
-                  <code class="ww">user</code>
-                  @
-                  <code class="ww"><%= ftp %></code>
-                  :
-                  <code class="ww">22</code>
+                    <a href="#" class="btn btn-xs btn-danger pull-right">
+                      <i class="fa fa-times"></i>
+                      <span class="hidden-xs"><%= t :remove %></span>
+                    </a>
+                    <i class="fa fa-sitemap"></i>
+                    <code class="ww"><%= ftp.user %></code>
+                    @
+                    <code class="ww"><%= ftp.host %></code>
+                    :
+                    <code class="ww"><%= ftp.port %></code>
+                    <i class="fa fa-arrow-right"></i>
+                    <code class="ww"><%= cf.success_path %></code>
                   </td>
                 </tr>
               <% end %>
@@ -70,7 +74,7 @@
   
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="panel panel-success">
         <div class="panel-heading">
           <h3 class="panel-title pull-left">
@@ -79,6 +83,7 @@
           </h3>
           <a href="#" class="btn btn-sm btn-success pull-right">
             <i class="fa fa-plus"></i>
+            <span class="hidden-xs"><%= t :add_contact %></span>
 	  </a>
 	  <div class="clearfix"></div>
         </div>
@@ -99,7 +104,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div class="panel panel-danger">
         <div class="panel-heading">
           <h3 class="panel-title pull-left">
@@ -108,6 +113,7 @@
           </h3>
           <a href="#" class="btn btn-sm btn-success pull-right">
             <i class="fa fa-plus"></i>
+            <span class="hidden-xs"><%= t :add_contact %></span>
 	  </a>
 	  <div class="clearfix"></div>
         </div>

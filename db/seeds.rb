@@ -51,21 +51,18 @@ contact2 = User.create!({
 channel1 = Channel.create({
   name:         "NRJ Paris",
   queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/NRJParis/success",
   error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/error"
 })
 
 channel2 = Channel.create({
   name:         "NRJ 12",
   queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/NRJ12/success",
   error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/error"
 })
 
 channel3 = Channel.create({
   name:         "Chérie 25",
   queue_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/pending",
-  success_path: "/home/ghis/Workspace/nrj-eit/data/Cherie25/success",
   error_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/error"
 })
 
@@ -78,8 +75,25 @@ ftp1 = Ftp.create({
   user:            "ghis182",
   password:        "turtoise",
   passive:         false,
-  root_path:       ""
 })
+
+channel1_ftp1 = ChannelFtp.create(
+  channel: channel1,
+  ftp: ftp1,
+  success_path: "/NRJ"
+)
+
+channel2_ftp1 = ChannelFtp.create(
+  channel: channel2,
+  ftp: ftp1,
+  success_path: "/NRJ"
+)
+
+channel2_ftp1 = ChannelFtp.create(
+  channel: channel3,
+  ftp: ftp1,
+  success_path: "/NRJ"
+)
 
 channel1.admins << admin
 channel2.users  << admin

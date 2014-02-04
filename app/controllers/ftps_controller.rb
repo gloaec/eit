@@ -24,7 +24,6 @@ class FtpsController < ApplicationController
 
   # POST /ftps/ping.json
   def ping
-	  p ftp_params.inspect
     @ftp = Ftp.new(ftp_params)
     return @ftp.ping?
   end

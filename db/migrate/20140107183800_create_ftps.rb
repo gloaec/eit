@@ -5,7 +5,6 @@ class CreateFtps < ActiveRecord::Migration
       t.integer :port
       t.string :user,               :null => false, :default => ""
       t.column :password_digest, :binary, :limit => 10.megabyte
-      t.string :root_path
       t.boolean :passive
       t.references :channel
 
