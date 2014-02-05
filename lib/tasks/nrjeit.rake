@@ -17,6 +17,7 @@ task :validate, [:paths] => :environment do |t, args|
   args.paths.each do |path|
  
     next unless File.exists? path
+    next unless File.extname(path) == ".xml"
 
     f, program = nil
     channel_id = File.basename(File.dirname(path)).to_i
@@ -26,11 +27,20 @@ task :validate, [:paths] => :environment do |t, args|
     
     #TODO: Extract start_time with regex on file name
 
+    chmoded = 0
+
     begin
       f = File.open(path)
-      program = channel.programs.create(xml: f) 
-    rescue Exception => e
-      p "Exception #{e}"                 
+      program = Program.find_or_create_by_xml_file_name(File.basename(path))
+      program.program_errors.destroy_all
+      program.xml = f
+      program.channel = channel
+      program.save
+    rescue => e
+      File.chmod(0755, path) rescue nil
+      chmoded += 1
+      retry if chmoded < 2
+      puts e.message
       program.dangers.create(
         :classname => 'danger',
         :code => ProgramError::FILE,

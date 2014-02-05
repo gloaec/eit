@@ -30,6 +30,8 @@ class ChannelsController < ApplicationController
 
   # GET /channels/1/edit
   def edit
+    @ftps = Ftp.select {|_| can?(:read, _) }
+    @contacts = User.select {|_| can?(:read, _) }
   end
 
   # POST /channels
@@ -80,6 +82,8 @@ class ChannelsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def channel_params
-      params.require(:channel).permit(:name, :queue_path, :success_path, :error_path)
+      params.require(:channel).permit(:name, :queue_path, :error_path,
+          :min_duration_error, :min_duration_warning, :min_gap_error, :min_gap_warning,
+          :max_duration_error, :max_duration_warning, :max_gap_error, :max_gap_warning)
     end
 end

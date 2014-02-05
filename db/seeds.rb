@@ -45,25 +45,31 @@ contact2 = User.create!({
   password_confirmation: "user12345"
 })
 
+me = User.create!({
+  email:                 "ghis182@gmail.com",
+  role:                  "contact",
+  password:              "user12345",
+  password_confirmation: "user12345"
+})
 
 # Channels
 
 channel1 = Channel.create({
   name:         "NRJ Paris",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/pending",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJParis/error"
+  queue_path:   "/home/guest/EIT/NRJParis_pending",
+  error_path:   "/home/guest/EIT/NRJParis_error"
 })
 
 channel2 = Channel.create({
   name:         "NRJ 12",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/pending",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/NRJ12/error"
+  queue_path:   "/home/guest/EIT/NRJ12_pending",
+  error_path:   "/home/guest/EIT/NRJ12_error"
 })
 
 channel3 = Channel.create({
   name:         "Chérie 25",
-  queue_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/pending",
-  error_path:   "/home/ghis/Workspace/nrj-eit/data/Cherie25/error"
+  queue_path:   "/home/guest/EIT/Cherie25_pending",
+  error_path:   "/home/guest/EIT/Cherie25_error"
 })
 
 
@@ -80,19 +86,19 @@ ftp1 = Ftp.create({
 channel1_ftp1 = ChannelFtp.create(
   channel: channel1,
   ftp: ftp1,
-  success_path: "/NRJ"
+  success_path: "/NRJ/NRJParis"
 )
 
 channel2_ftp1 = ChannelFtp.create(
   channel: channel2,
   ftp: ftp1,
-  success_path: "/NRJ"
+  success_path: "/NRJ/NRJ12"
 )
 
 channel2_ftp1 = ChannelFtp.create(
   channel: channel3,
   ftp: ftp1,
-  success_path: "/NRJ"
+  success_path: "/NRJ/Cherie25"
 )
 
 channel1.admins << admin
@@ -103,22 +109,29 @@ channel1.users << user
 channel2.users << user
 channel3.users << user
 
-channel1.contacts << user
-channel2.contacts << user
-channel3.contacts << user
+#channel1.error_contacts << user
+#channel2.error_contacts << user
+#channel3.error_contacts << user
+#
+#channel1.error_contacts << admin 
+#channel2.error_contacts << admin 
+#channel3.error_contacts << admin 
+#
+#channel1.error_contacts << superadmin 
+#channel2.error_contacts << superadmin 
+#channel3.error_contacts << superadmin 
+#
+#channel1.success_contacts << contact1 
+#channel2.success_contacts << contact1 
+#channel3.success_contacts << contact1 
+#
+#channel1.success_contacts << contact2 
+#channel2.success_contacts << contact2 
+#channel3.success_contacts << contact2 
 
-channel1.contacts << admin 
-channel2.contacts << admin 
-channel3.contacts << admin 
-
-channel1.contacts << superadmin 
-channel2.contacts << superadmin 
-channel3.contacts << superadmin 
-
-channel1.contacts << contact1 
-channel2.contacts << contact1 
-channel3.contacts << contact1 
-
-channel1.contacts << contact2 
-channel2.contacts << contact2 
-channel3.contacts << contact2 
+channel1.error_contacts << me 
+channel2.error_contacts << me
+channel3.error_contacts << me
+channel1.success_contacts << me 
+channel2.success_contacts << me 
+channel3.success_contacts << me 

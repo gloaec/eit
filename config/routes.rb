@@ -15,6 +15,9 @@ NrjEit::Application.routes.draw do
     get "events"
     resources :programs
     resources :ftps
+    resources :channel_ftps, only: [:create, :destroy]
+    resources :channel_success_contacts, only: [:create, :destroy]
+    resources :channel_error_contacts, only: [:create, :destroy]
   end
 
   post "ftps/ping"

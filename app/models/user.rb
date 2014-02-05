@@ -8,8 +8,8 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :channels
   has_many :admin_channels, class_name: 'ChannelAdmin'
   has_many :admins, through: :admin_channels, source: :channel
-  has_many :contact_channels, class_name: 'ChannelContact'
-  has_many :contacts, through: :contact_channels, source: :channel
+  has_many :success_contact_channels, class_name: 'ChannelSuccessContact', dependent: :destroy
+  has_many :error_contact_channels, class_name: 'ChannelErrorContact', dependent: :destroy
 
   ROLES = %w[guest contact user admin superadmin]
 

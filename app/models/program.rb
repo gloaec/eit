@@ -18,6 +18,20 @@ class Program < ActiveRecord::Base
       end
   end
 
+  def success_notification
+    self.channel.success_contacts.each do |user|
+      p "   Sending success notification to #{user.email}..."
+      ProgramMailer.success_notification user, self
+    end
+  end 
+
+  def error_notification
+    self.channel.error_contacts.each do |user|
+      p "   Sending error notification to #{user.email}..."
+      ProgramMailer.error_notification user, self
+    end
+  end 
+
   def transfer
     ftp, results = nil, {}
     self.channel.channel_ftps.each do |cf|
@@ -130,7 +144,7 @@ class Program < ActiveRecord::Base
               before_event: event,
               after_event:  event,
               code:         ProgramError::DURATION_WARNING,
-              msg:          "Incorrect event duration",
+              msg:          "Suspicous event duration",
               line:         event_node.line
             )
           end
@@ -140,7 +154,7 @@ class Program < ActiveRecord::Base
                 (gap < self.channel.min_gap_error and self.channel.min_gap_error > 0) or
                 (gap > self.channel.max_gap_error and self.channel.max_gap_error > 0)
             self.dangers.build(
-              before_event: event,
+              before_event: before_event,
               after_event:  event,
               code:         ProgramError::GAP_ERROR,
               msg:          "Incorrect time gap",
@@ -149,10 +163,10 @@ class Program < ActiveRecord::Base
           elsif (durationgap < self.channel.min_gap_warning and self.channel.min_gap_warning > 0) or
                 (durationgap > self.channel.max_gap_warning and self.channel.max_gap_warning > 0)
             self.warnings.build(
-              before_event: event,
+              before_event: before_event,
               after_event:  event,
               code:         ProgramError::GAP_WARNING,
-              msg:          "Incorrect time gap",
+              msg:          "Suspicious time gap",
               line:         event_node.line
             )
           end
@@ -210,14 +224,16 @@ class Program < ActiveRecord::Base
       self.save
     end 
 
-    p "   [#{self.dangers.any? ? 'ERROR' : 'SUCCESS'}] #{self.dangers.count} errors / #{self.dangers.count} warnings detected"
+    p "   [#{self.dangers.any? ? 'ERROR' : 'SUCCESS'}] #{self.dangers.count} errors / #{self.warnings.count} warnings detected"
 
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
       FileUtils.mv @xml_file, self.channel.error_path
+      self.error_notification
     else 
       self.transfer
       FileUtils.rm @xml_file
+      self.success_notification
     end
 
     f.close

@@ -1,3 +1,7 @@
+<% @channel_ftp = @channel.channel_ftps.new %>
+
+<%= form_for [@channel, @channel_ftp], html: { class: 'form-horizontal' } do |f| %>
+
   <div class="modal fade" id="ftp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -9,8 +13,16 @@
           </h4>
         </div>
 	<div class="modal-body">
-          <%= f.fields_for :channel_ftps, f.object.ftps.build do |ff| %>
-            <%#= ff.fields_for :ftp do |fff| %>
+          <div class="form-group">
+            <%= f.label :ftp_id, t(:ftp), class: 'control-label col-sm-3' %>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
+                <%= f.select :ftp_id, [["Create new FTP", 0]] + @ftps.collect {|x| ["#{x.user}@#{x.host}",x.id]}, {}, { class: "form-control" } %>
+              </div>
+            </div>
+          </div>
+          <%= f.fields_for :ftp, Ftp.new do |ff| %>
             <div class="form-group">
               <%= ff.label :user, class: 'control-label col-sm-3' %>
               <div class="col-sm-9">
@@ -42,16 +54,6 @@
               </div>
             </div>
             <div class="form-group">
-              <%= ff.label :success_path, t(:success_path), class: 'control-label col-sm-3' %>
-              <div class="col-sm-9">
-                <div class="input-group">
-                    <span class="input-group-addon"><i class="fa fa-folder-o"></i></span>
-                    <%= ff.text_field :success_path, class: 'form-control' %>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
               <%= ff.label :passive, class: 'control-label col-sm-3' do %>Mode<% end %>
               <div class="col-sm-6">
                 <div class="btn-group">
@@ -61,10 +63,20 @@
               </div>
               <%= ff.check_box :passive, class: 'hidden' %>
 	      <div class="col-sm-3">
-  	      <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-primary btn-ping">
+  	      <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-primary btn-ping pull-right">
                 <i class="fa fa-signal"></i>
   	        <%= t :ping_ftp %>
   	      </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <%= f.label :success_path, t(:success_path), class: 'control-label col-sm-3' %>
+              <div class="col-sm-9">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="fa fa-folder-o"></i></span>
+                    <%= f.text_field :success_path, class: 'form-control' %>
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -73,7 +85,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success">
+          <button type="submit" class="btn btn-success">
             <i class="fa fa-plus"></i>
             <%= t :add_ftp %>
           </button>
@@ -82,8 +94,25 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+<% end %>
+
 <script type="text/javascript">
   (function($){
+
+    function form_ftp(){
+      return {
+        id:               $('#channel_ftp_ftp_id')                 .val(), 
+        user:             $('#channel_ftp_ftp_attributes_user')    .val(), 
+        host:             $('#channel_ftp_ftp_attributes_host')    .val(),
+        port:             $('#channel_ftp_ftp_attributes_port')    .val(),
+        password_digest:  $('#channel_ftp_ftp_attributes_password').val(),
+        password:         $('#channel_ftp_ftp_attributes_password').val(),
+        passive:          $('#channel_ftp_ftp_attributes_passive') .val()
+      }
+    }
+
+    var ftp_bkp = form_ftp();
+    var ftps = <%= @ftps.to_json.html_safe %>;
 
     $("#ping_ftp").on('click', function(e){
       $('.btn-ping').button('loading');	    
@@ -91,12 +120,7 @@
       var $form = $("#channel_form");
       $.post("<%= ftps_ping_path(format: :json) %>", { 
         action: "ping",
-        ftp: {
-          user: $form.find("input[name='channel[ftps_attributes][0][user]']").val(),  
-	  password: $form.find("input[name='channel[ftps_attributes][0][password]']").val(),  
-          host: $form.find("input[name='channel[ftps_attributes][0][host]']").val(),  
-          port: $form.find("input[name='channel[ftps_attributes][0][port]']").val()
-        }
+        ftp: form_ftp()
       }).done(function(data){
         if(data.response){
 	  $('.btn-ping')
@@ -141,6 +165,29 @@
       $('#passive').prop('checked', $(this).val() == "1");
       $('.btn-mode').removeClass('active');
       $(this).addClass('active');
+    });
+     
+
+    $('#channel_ftp_ftp_id').change(function(){
+      var id = $(this).val();
+      if(id == 0){
+        $('#channel_ftp_ftp_attributes_user')    .prop('disabled', false).val(ftp_bkp.user)
+        $('#channel_ftp_ftp_attributes_host')    .prop('disabled', false).val(ftp_bkp.host)
+        $('#channel_ftp_ftp_attributes_port')    .prop('disabled', false).val(ftp_bkp.port)
+        $('#channel_ftp_ftp_attributes_password').prop('disabled', false).val(ftp_bkp.password_digest)
+        $('#channel_ftp_ftp_attributes_passive') .prop('disabled', false).val(ftp_bkp.passive)
+      } else {
+        var ftp = null;
+        ftp_bkp = form_ftp();
+        $.each(ftps, function(k,v){
+          if(v.id == id) ftp = v
+        }); 
+        $('#channel_ftp_ftp_attributes_user')    .prop('disabled', true).val(ftp.user)
+        $('#channel_ftp_ftp_attributes_host')    .prop('disabled', true).val(ftp.host)
+        $('#channel_ftp_ftp_attributes_port')    .prop('disabled', true).val(ftp.port)
+        $('#channel_ftp_ftp_attributes_password').prop('disabled', true).val(ftp.password_digest)
+        $('#channel_ftp_ftp_attributes_passive') .prop('disabled', true).val(ftp.passive)
+      }
     });
 
   }(jQuery));

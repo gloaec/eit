@@ -39,15 +39,15 @@ ActiveRecord::Schema.define(version: 20140201150444) do
   add_index "channels_admins", ["channel_id"], name: "index_channels_admins_on_channel_id"
   add_index "channels_admins", ["user_id"], name: "index_channels_admins_on_user_id"
 
-  create_table "channels_contacts", force: true do |t|
+  create_table "channels_error_contacts", force: true do |t|
     t.integer  "channel_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "channels_contacts", ["channel_id"], name: "index_channels_contacts_on_channel_id"
-  add_index "channels_contacts", ["user_id"], name: "index_channels_contacts_on_user_id"
+  add_index "channels_error_contacts", ["channel_id"], name: "index_channels_error_contacts_on_channel_id"
+  add_index "channels_error_contacts", ["user_id"], name: "index_channels_error_contacts_on_user_id"
 
   create_table "channels_ftps", force: true do |t|
     t.integer "channel_id"
@@ -57,6 +57,16 @@ ActiveRecord::Schema.define(version: 20140201150444) do
 
   add_index "channels_ftps", ["channel_id"], name: "index_channels_ftps_on_channel_id"
   add_index "channels_ftps", ["ftp_id"], name: "index_channels_ftps_on_ftp_id"
+
+  create_table "channels_success_contacts", force: true do |t|
+    t.integer  "channel_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "channels_success_contacts", ["channel_id"], name: "index_channels_success_contacts_on_channel_id"
+  add_index "channels_success_contacts", ["user_id"], name: "index_channels_success_contacts_on_user_id"
 
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"

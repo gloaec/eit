@@ -1,43 +1,51 @@
 <div class="top20">
-  <% program.program_errors.each do |error| %>
+  <% err_id = 0 %>
+  <% program.program_errors.each do |error| err_id+=1 %>
     <div class="alert alert-<%= error.classname %> <%= "no-margins" if false and error == program.dangers.last %>">
       <% gap = TimeDifference.between(error.before_event.end_at, error.after_event.start_at).in_general unless
           error.before_event.nil? or error.after_event.nil? %>
 
+       <kbd>#<%= err_id %></kbd>
+
        <% case error.code.to_i %>
-         <% when ProgramError::GAP_ERROR %>
+         <% when ProgramError::GAP_ERROR, ProgramError::GAP_WARNING %>
 
            <strong>
-             <i class="fa fa-clock-o"></i>
-             <%= error.before_event.end_at.strftime("%H:%M:%S") %>
              <%= error.msg %> :
            </strong>
-           0s between
-           <i class="fa fa-play-circle"></i>
-           <strong><%= error.before_event.name.humanize %></strong>
-           and
-           <i class="fa fa-play-circle"></i>
-           <strong><%= error.after_event.name.humanize %></strong>
-
-         <% when ProgramError::GAP_WARNING %>
-
-           <strong>
-             <i class="fa fa-clock-o"></i>
-             <%= error.before_event.end_at.strftime("%H:%M:%S") %>
-             <i class="fa fa-arrows-h"></i>
-             <i class="fa fa-clock-o"></i>
-             <%= error.after_event.start_at.strftime("%H:%M:%S") %>
-             <%= error.msg %> :
-           </strong>
+           
+           <i class="fa fa-clock-o"></i>
            <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
            <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
            <%= "#{gap[:seconds]}s" %>
            between
            <i class="fa fa-play-circle"></i>
            <strong><%= error.before_event.name.humanize %></strong>
+           <i class="fa fa-stop"></i>
+           <%= error.before_event.end_at.strftime("%H:%M:%S") %>
            and
            <i class="fa fa-play-circle"></i>
            <strong><%= error.after_event.name.humanize %></strong>
+           <i class="fa fa-play"></i>
+           <%= error.after_event.start_at.strftime("%H:%M:%S") %>
+
+         <% when ProgramError::DURATION_ERROR, ProgramError::DURATION_WARNING %>
+
+           <strong>
+             <%= error.msg %> :
+           </strong>
+           <i class="fa fa-clock-o"></i>
+           <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
+           <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
+           <%= "#{gap[:seconds]}s" %>
+           for
+           <i class="fa fa-play-circle"></i>
+           <strong><%= error.before_event.name.humanize %></strong>
+           <i class="fa fa-play"></i>
+           <%= error.before_event.end_at.strftime("%H:%M:%S") %>
+           <i class="fa fa-ellipsis-h"></i>
+           <i class="fa fa-stop"></i>
+           <%= error.after_event.start_at.strftime("%H:%M:%S") %>
 
          <% when ProgramError::FILE %>
 

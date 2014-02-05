@@ -24,7 +24,7 @@ class FtpsController < ApplicationController
 
   # POST /ftps/ping.json
   def ping
-    @ftp = Ftp.new(ftp_params)
+    @ftp = params[:ftp][:id] != "0" ? Ftp.find(params[:ftp][:id]) : Ftp.new(ftp_params)
     return @ftp.ping?
   end
 

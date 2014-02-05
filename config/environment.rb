@@ -12,3 +12,16 @@ NrjEit::Application.config.to_prepare do
     Devise::UnlocksController.layout "devise"            
     Devise::PasswordsController.layout "devise"        
 end
+
+# Configure Mails
+ActionMailer::Base.delivery_method = :smtp
+#ActionMailer::Base.default_content_type = "text/html"
+ActionMailer::Base.smtp_settings = {
+   :address => "smtp.gmail.com",
+   :port => 587,
+   :domain => "gmail.com",
+   :authentication => :login,
+   :user_name => "ghis182@gmail.com",
+   :password => "Turtoise182",
+   :enable_starttls_auto => true
+}

@@ -23,7 +23,7 @@
       <div class="panel-body">
         <table class="table table-striped table-condensed no-margins">
           <tbody>
-            <% @channel.channel_ftps.each do |cf| %>
+            <% channel.channel_ftps.each do |cf| %>
               <% ftp = cf.ftp %>
               <tr>
                 <td>
@@ -55,7 +55,7 @@
       <div class="panel-body">
         <table class="table table-striped table-condensed no-margins">
           <tbody>
-            <% channel.users.each do |user| %>
+            <% channel.success_contacts.each do |user| %>
               <tr>
                 <td>
                   <i class="fa fa-<%= if user.role? :user then 'user' else 'envelope' end %>"></i>
@@ -80,7 +80,7 @@
       <div class="panel-body">
         <table class="table table-striped table-condensed no-margins">
           <tbody>
-            <% channel.contacts.each do |user| %>
+            <% channel.error_contacts.each do |user| %>
               <tr>
                 <td>
                   <i class="fa fa-<%= if user.role? :user then 'user' else 'envelope' end %>"></i>
