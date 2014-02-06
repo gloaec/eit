@@ -16,6 +16,11 @@ class ChannelErrorContactsController < ApplicationController
         format.json { render json: @channel_error_contact.errors, status: :unprocessable_entity }
       end
     end
+  rescue ActiveRecord::RecordNotUnique
+    respond_to do |format|
+      format.html { redirect_to edit_channel_path(@channel), flash: {error: 'Already in contact list'} }
+      format.json { render json: @channel_error_contact.errors, status: :unprocessable_entity }
+    end
   end
 
   # DELETE /channel_error_contacts/1
@@ -41,14 +46,20 @@ class ChannelErrorContactsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def channel_error_contact_params
       if params[:channel_error_contact][:user_id] == "0" or params[:channel_error_contact][:user_id].nil?
-        _params = params.require(:channel_error_contact).permit(:success_path, user_attributes: [:id, :email, :role])
-        password = SecureRandom.hex
-        _params[:user_attributes][:password] = password
-        _params[:user_attributes][:password_confirmation] = password
-        _params[:user_attributes][:role] = 'contact'
+        contact = User.find_by_email(params[:channel_error_contact][:user_attributes][:email])
+        unless contact.nil?
+          _params = params.require(:channel_error_contact).permit()
+          _params[:user_id] = contact.id
+        else
+          _params = params.require(:channel_error_contact).permit(user_attributes: [:id, :email, :role])
+          password = SecureRandom.hex
+          _params[:user_attributes][:password] = password
+          _params[:user_attributes][:password_confirmation] = password
+          _params[:user_attributes][:role] = 'contact'
+        end
         _params
       else
-        params.require(:channel_error_contact).permit(:success_path, :user_id)
+        params.require(:channel_error_contact).permit(:user_id)
       end
     end
 end

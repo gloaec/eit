@@ -36,8 +36,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_admins", ["channel_id"], name: "index_channels_admins_on_channel_id"
-  add_index "channels_admins", ["user_id"], name: "index_channels_admins_on_user_id"
+  add_index "channels_admins", ["channel_id", "user_id"], name: "index_channels_admins_on_channel_id_and_user_id", unique: true
 
   create_table "channels_error_contacts", force: true do |t|
     t.integer  "channel_id"
@@ -46,8 +45,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_error_contacts", ["channel_id"], name: "index_channels_error_contacts_on_channel_id"
-  add_index "channels_error_contacts", ["user_id"], name: "index_channels_error_contacts_on_user_id"
+  add_index "channels_error_contacts", ["channel_id", "user_id"], name: "index_channels_error_contacts_on_channel_id_and_user_id", unique: true
 
   create_table "channels_ftps", force: true do |t|
     t.integer "channel_id"
@@ -65,8 +63,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_success_contacts", ["channel_id"], name: "index_channels_success_contacts_on_channel_id"
-  add_index "channels_success_contacts", ["user_id"], name: "index_channels_success_contacts_on_user_id"
+  add_index "channels_success_contacts", ["channel_id", "user_id"], name: "index_channels_success_contacts_on_channel_id_and_user_id", unique: true
 
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"
@@ -75,8 +72,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_users", ["channel_id"], name: "index_channels_users_on_channel_id"
-  add_index "channels_users", ["user_id"], name: "index_channels_users_on_user_id"
+  add_index "channels_users", ["channel_id", "user_id"], name: "index_channels_users_on_channel_id_and_user_id", unique: true
 
   create_table "events", force: true do |t|
     t.string   "name"
