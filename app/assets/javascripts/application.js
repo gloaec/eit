@@ -15,8 +15,7 @@
 //= require underscore
 //= require turbolinks
 //= require bootstrap
-//= require bootstrap-datetimepicker
-//= require locales/bootstrap-datetimepicker.fr
+//= require bootstrap-timepicker
 //= require moment
 //= require_tree .
 

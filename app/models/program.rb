@@ -2,11 +2,12 @@ require 'net/ftp'
 
 class Program < ActiveRecord::Base
   belongs_to :channel
-  has_many :events
-  has_many :program_errors, foreign_key: "program_id",  class_name: "ProgramError"
+  has_many :events, dependent: :destroy
+  has_many :program_errors, foreign_key: "program_id", class_name:"ProgramError", dependent: :destroy
   has_many :dangers,   -> { where classname: 'danger' }, class_name: 'ProgramError'
   has_many :warnings, -> { where classname: 'warning' }, class_name: 'ProgramError'
   has_attached_file :xml
+
   accepts_nested_attributes_for :events, allow_destroy: true
 
   def xml_file
@@ -65,6 +66,8 @@ class Program < ActiveRecord::Base
 
     f, doc = nil
     self.xml_file
+    self.program_errors.destroy_all
+    self.events.destroy_all
 
     begin
       f = File.open(@xml_file)
@@ -96,10 +99,11 @@ class Program < ActiveRecord::Base
         events = doc.css("EVENT")
         service = doc.css("SERVICE").first
 
-        self.start_at = Time.parse(service['start_time']) unless service.nil?
+        self.start_at = service['start_time'].to_time.utc unless service.nil?
 
         events.each do |event|
- 
+
+          gap = nil
           position+=1
           name_node = event.css("NAME").first
           name = unless name_node.nil? then name_node.content else nil end
@@ -107,10 +111,17 @@ class Program < ActiveRecord::Base
           description = unless description_node.nil? then description_node.content else nil end
           minimum_age_node = event.css("PARENTAL_RATING").first
           minimum_age = unless minimum_age_node.nil? then minimum_age_node['minimum_age'] else nil end
-          start_at = Time.parse(event['time'])
-          prev_end_at = end_at
-          timegap = TimeDifference.between(prev_end_at, start_at).in_general unless end_at.nil?
-          gap = timegap[:hours].to_i.hours + timegap[:minutes].to_i.minutes + timegap[:seconds].to_i.seconds unless timegap.nil?
+          start_at = event['time'].to_time.utc
+          unless end_at.nil?
+            prev_end_at = end_at
+            if prev_end_at <= start_at
+              timegap = TimeDifference.between(prev_end_at, start_at).in_general
+              gap = timegap[:hours].to_i.hours + timegap[:minutes].to_i.minutes + timegap[:seconds].to_i.seconds unless timegap.nil?
+            else
+              timegap = TimeDifference.between(start_at, prev_end_at).in_general
+              gap = -(timegap[:hours].to_i.hours + timegap[:minutes].to_i.minutes + timegap[:seconds].to_i.seconds) unless timegap.nil?
+            end
+          end
           duration = Time.parse(event['duration'])
           durationgap = duration.hour.hours + duration.min.minutes + duration.sec.seconds
           end_at = start_at + durationgap
@@ -135,7 +146,7 @@ class Program < ActiveRecord::Base
               before_event: event,
               after_event:  event,
               code:         ProgramError::DURATION_ERROR,
-              msg:          "Incorrect event duration",
+              msg:          "Wrong event duration",
               line:         event_node.line
             )
           elsif (durationgap < self.channel.min_duration_warning and self.channel.min_duration_warning > 0) or
@@ -144,7 +155,7 @@ class Program < ActiveRecord::Base
               before_event: event,
               after_event:  event,
               code:         ProgramError::DURATION_WARNING,
-              msg:          "Suspicous event duration",
+              msg:          "Potentially wrong event duration",
               line:         event_node.line
             )
           end
@@ -157,16 +168,16 @@ class Program < ActiveRecord::Base
               before_event: before_event,
               after_event:  event,
               code:         ProgramError::GAP_ERROR,
-              msg:          "Incorrect time gap",
+              msg:          "Wrong time gap",
               line:         event_node.line
             )
-          elsif (durationgap < self.channel.min_gap_warning and self.channel.min_gap_warning > 0) or
-                (durationgap > self.channel.max_gap_warning and self.channel.max_gap_warning > 0)
+          elsif (gap < self.channel.min_gap_warning and self.channel.min_gap_warning > 0) or
+                (gap > self.channel.max_gap_warning and self.channel.max_gap_warning > 0)
             self.warnings.build(
               before_event: before_event,
               after_event:  event,
               code:         ProgramError::GAP_WARNING,
-              msg:          "Suspicious time gap",
+              msg:          "Potentially wrong time gap",
               line:         event_node.line
             )
           end
@@ -228,16 +239,49 @@ class Program < ActiveRecord::Base
 
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
-      FileUtils.mv @xml_file, self.channel.error_path
-      self.error_notification
+      FileUtils.mv @xml_file, self.channel.error_path unless FileUtils.identical?(@xml_file, File.join(self.channel.error_path, self.xml_file_name))
+      self.error_notification if self.notify_error
     else 
       self.transfer
       FileUtils.rm @xml_file
-      self.success_notification
+      self.success_notification if self.notify_success
     end
+
+    self.update_attributes(notify_success: true, notify_error: true)
 
     f.close
     
+  end
+
+
+  def revalidate
+
+    f, doc = nil
+    @xml_file = File.join(self.channel.error_path, self.xml_file_name)
+
+    self.program_errors.destroy_all
+
+    begin
+      f = File.open(@xml_file)
+      doc = Nokogiri::XML(f)
+    end
+
+    event_nodes = doc.css("EVENT")
+    self.events.each_with_index do |event, i|
+      node = event_nodes[i]
+      p node.css('NAME').first.content
+      node.css("NAME").first.inner_html = event.name
+      node['time'] = event.start_at.in_time_zone('Berlin').iso8601
+      duration = Time.at(TimeDifference.between(event.start_at, event.end_at).in_seconds).utc
+      node['duration'] = duration.strftime("PT%HH%MM%SS")
+    end
+
+    f.close
+
+    File.open(@xml_file, 'w') { |f| f.print(doc.to_xml) }
+
+    self.validate
+
   end
 
 end

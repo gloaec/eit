@@ -12,7 +12,11 @@ gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails'
 gem 'underscore-rails'
 gem 'bootstrap-sass', '~> 3.0.0'
-gem 'bootstrap-datetimepicker-rails'
+#gem 'bootstrap-datetimepicker-rails'
+gem 'bootstrap-timepicker-rails', 
+  #git: 'https://github.com/gloaec/bootstrap-timepicker-rails.git',
+  path: 'vendor/bootstrap-timepicker-rails',
+  branch: 'bootstrap-3'
 gem 'font-awesome-rails', '~> 4.0.0'
 gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'

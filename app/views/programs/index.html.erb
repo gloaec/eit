@@ -12,22 +12,22 @@
 
 <ul class="nav nav-tabs" id="myTab">
   <li class="active">
-    <a href="#programs" data-toggle="tab">
-      <i class="fa fa-th"></i> <%= t :programs %>
+    <a href="#pending" data-toggle="tab">
+      <i class="fa fa-warning"></i> <%= t :pending_programs %>
     </a>
   </li>
   <li>
-    <a href="#pending" data-toggle="tab">
-      <i class="fa fa-warning"></i> <%= t :pending_programs %>
+    <a href="#programs" data-toggle="tab">
+      <i class="fa fa-th"></i> <%= t :programs %>
     </a>
   </li>
 </ul>
 
 <div class="tab-content">
-  <div class="tab-pane active" id="programs">
-    <%= render 'programs/calendar', events_source: programs_events_path, programs: @programs %>
-  </div>
-  <div class="tab-pane" id="pending">
+  <div class="tab-pane active" id="pending">
     <%= render 'programs/pending', programs: @programs %>
+  </div>
+  <div class="tab-pane" id="programs">
+    <%= render 'programs/calendar', events_source: programs_events_path, programs: @programs %>
   </div>
 </div>

@@ -52,7 +52,7 @@
     </div>
     <%= f.check_box :passive, class: 'hidden' %>
     <div class="col-sm-3">
-    <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-primary btn-ping">
+    <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-info btn-ping">
       <i class="fa fa-signal"></i>
       <%= t :ping_ftp %>
     </button>
@@ -79,14 +79,14 @@
         if(data.response){
 	  $('.btn-ping')
 	  .button('reset').empty()
-	  .removeClass('btn-primary btn-danger')
+	  .removeClass('btn-info btn-danger')
 	  .addClass('btn-success')
 	  .append($('<i>').addClass('fa fa-link'))
 	  .append(' Working');
 	} else {
 	  $('.btn-ping')
 	  .button('reset').empty()
-	  .removeClass('btn-primary btn-success')
+	  .removeClass('btn-info btn-success')
 	  .addClass('btn-danger')
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
@@ -94,7 +94,7 @@
       }).error(function(){
 	  $('.btn-ping')
 	  .button('reset').empty()
-	  .removeClass('btn-primary btn-success')
+	  .removeClass('btn-info btn-success')
 	  .addClass('btn-danger')
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
@@ -103,20 +103,20 @@
         $('.btn-ping')
         .button('reset').empty()
         .removeClass('btn-success btn-danger')
-        .addClass('btn-primary')
+        .addClass('btn-info')
         .append($('<i>').addClass('fa fa-signal'))
         .append(' Ping Ftp');
       }, 3000);
     });
 
     $('.btn-mode').each(function(){
-      if ($(this).val() == "1" && $('#passive').is(':checked') ||
-          $(this).val() == "0" && !$('#passive').is(':checked') ){
+      if ($(this).val() == "1" && $('#ftp_passive').is(':checked') ||
+          $(this).val() == "0" && !$('#ftp_passive').is(':checked') ){
         $(this).addClass('active');
       }
     })
     .click(function(){
-      $('#passive').prop('checked', $(this).val() == "1");
+      $('#ftp_passive').prop('checked', $(this).val() == "1");
       $('.btn-mode').removeClass('active');
       $(this).addClass('active');
     });

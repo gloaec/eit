@@ -3,6 +3,9 @@ class CreateChannelsUsers < ActiveRecord::Migration
     create_table :channels_users do |t|
       t.references :channel#, index: true
       t.references :user#, index: true
+      t.string     :role
+      t.string     :success
+      t.string     :error
 
       t.timestamps
     end

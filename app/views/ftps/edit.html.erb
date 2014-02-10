@@ -18,16 +18,13 @@
       </ol>
     </div>
     <div class="col-xs-2">
-      <a href="#" onclick="$('#ftp_form').submit()" class="btn btn-success btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :edit, @channel %>">
+      <a href="#" onclick="$('#ftp_form').submit()" class="btn btn-primary btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :edit, @ftp %>">
       <i class="fa fa-check"></i>
-      <span class="hidden-xs"><%= t :save %></span>
+      <span class="hidden-xs"><%= t :update %></span>
     </a>
     </div>
-    </div>
+  </div>
 <% end %>
 
 
 <%= render 'form', ftp: @ftp %>
-
-<%= link_to 'Show', @ftp %> |
-<%= link_to 'Back', ftps_path %>

@@ -15,7 +15,7 @@
       </ol>
     </div>
     <div class="col-xs-2">
-      <a href="#" onclick="$('#ftp_form').submit()" class="btn btn-success btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :edit, @channel %>">
+      <a href="#" onclick="$('#ftp_form').submit()" class="btn btn-success btn-breadcrumb col-md-12 pull-right <%= "disabled" unless can? :create, Ftp %>">
       <i class="fa fa-check"></i>
       <span class="hidden-xs"><%= t :save %></span>
     </a>
@@ -25,5 +25,3 @@
 
 
 <%= render 'form', ftp: @ftp %>
-
-<%= link_to 'Back', ftps_path %>

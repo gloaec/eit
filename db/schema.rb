@@ -29,15 +29,6 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  create_table "channels_admins", force: true do |t|
-    t.integer  "channel_id"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "channels_admins", ["channel_id", "user_id"], name: "index_channels_admins_on_channel_id_and_user_id", unique: true
-
   create_table "channels_error_contacts", force: true do |t|
     t.integer  "channel_id"
     t.integer  "user_id"
@@ -68,6 +59,9 @@ ActiveRecord::Schema.define(version: 20140201150444) do
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"
     t.integer  "user_id"
+    t.string   "role"
+    t.string   "success"
+    t.string   "error"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -119,6 +113,8 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "start_at"
     t.datetime "end_at"
     t.integer  "channel_id"
+    t.boolean  "notify_success",   default: true, null: false
+    t.boolean  "notify_error",     default: true, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "xml_file_name"

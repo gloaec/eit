@@ -29,9 +29,11 @@
         <div class="collapse navbar-collapse navbar-ex1-collapse">
           <ul class="nav navbar-nav side-nav">
             <% if can? :read, Program %>
-              <li><a href="<%= programs_path %>"><i class="fa fa-th"></i> Programs</a></li>
+              <li class="<%= 'active' if params[:controller] =='programs' %>">
+                <a href="<%= programs_path %>"><i class="fa fa-th"></i> Programs</a>
+              </li>
             <% end %>
-            <li class="dropdown <%= 'active' if params[:controller] == 'channels' %>">
+            <li class="dropdown <%= 'active' if params[:controller] =='channels' and params[:action] == 'index' %> open">
               <a href="<%= channels_url %>" class="dropdown-toggle">
                 <i class="fa fa-th-list"></i>
                 Channels
@@ -40,7 +42,7 @@
                   <b class="caret"></b>
                 </span>
               </a>
-              <ul class="dropdown-menu navbar-nav visible">
+              <ul class="dropdown-menu navbar-nav">
                 <% unless @channels.empty? %>
                   <% @channels.each do |channel| %>
                     <li class="<%= 'active' if @channel and @channel == channel %>">
@@ -58,15 +60,19 @@
               </ul>
             </li>
             <% if can? :read, User %>
-              <li><a href="<%= users_path %>"><i class="fa fa-group"></i> Users</a></li>
+              <li class="<%= 'active' if params[:controller] =='users' %>">
+                <a href="<%= users_path %>"><i class="fa fa-group"></i> Users</a>
+              </li>
             <% end %>
             <% if can? :read, Ftp %>
-              <li><a href="<%= ftps_path %>"><i class="fa fa-sitemap"></i> FTP Servers</a></li>
+              <li class="<%= 'active' if params[:controller] =='ftps' %>">
+                <a href="<%= ftps_path %>"><i class="fa fa-sitemap"></i> FTP Servers</a>
+              </li>
             <% end %>
           </ul>
 
           <ul class="nav navbar-nav navbar-right navbar-user">
-            <li class="dropdown messages-dropdown">
+            <!--li class="dropdown messages-dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> Messages <span class="badge">7</span> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <li class="dropdown-header">7 New Messages</li>
@@ -112,7 +118,7 @@
                 <li class="divider"></li>
                 <li><a href="#">View All</a></li>
               </ul>
-            </li>
+            </li-->
             <li class="dropdown user-dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-user"></i>
@@ -120,9 +126,9 @@
               <b class="caret"></b>
             </a>
               <ul class="dropdown-menu">
-                <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
-                <li><a href="#"><i class="fa fa-envelope"></i> Inbox <span class="badge">7</span></a></li>
-                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
+                <!--li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
+                <li><a href="#"><i class="fa fa-envelope"></i> Inbox <span class="badge">7</span></a></li-->
+                <li><a href="<%= user_path(@current_user) %>"><i class="fa fa-gear"></i> Settings</a></li>
                 <li class="divider"></li>
                 <li>
                 <%= link_to destroy_user_session_path, :method => :delete do %>

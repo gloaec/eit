@@ -51,8 +51,17 @@
         </td>
       </tr>
 
-      <% gap = next_event.end_at.nil? ? nil : TimeDifference.between(event.end_at, next_event.start_at).in_general %>
       <% errors = event.gap_errors %>
+      <% reverse = false %>
+
+      <% unless next_event.end_at.nil? %>
+        <% if event.end_at <= next_event.start_at %>
+          <% gap = TimeDifference.between(event.end_at, next_event.start_at).in_general %>
+        <% else %>
+          <% reverse = true %>
+          <% gap = TimeDifference.between(next_event.start_at, event.end_at).in_general %>
+        <% end %>
+      <% end %>
 
       <tr class="<%= errors.any? ? "alert alert-#{errors.first.classname}" : "text-muted" %>">
         <td>
@@ -83,6 +92,7 @@
           <% if gap %>
             <span class="text-default">
               <i class="fa fa-clock-o"></i>
+              <%= "-" if reverse %>
               <%= "#{gap[:hours]}h"   unless gap[:hours].zero?  %>
               <%= "#{gap[:minutes]}m" unless gap[:minutes].zero? and gap[:hours].zero? %>
               <%= "#{gap[:seconds]}s" %>

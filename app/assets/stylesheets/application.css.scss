@@ -9,7 +9,7 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require bootstrap
- *= require bootstrap-datetimepicker
+ *= require bootstrap-timepicker
  *= require font-awesome
  *= require ./sb-admin
  *= require_self
@@ -18,6 +18,19 @@
 
 @import "bootstrap/variables";
 
+.navbar-inverse .navbar-nav > .open > a, 
+.navbar-inverse .navbar-nav > .open > a:hover, 
+.navbar-inverse .navbar-nav > .open > a:focus {
+  background: inherit;
+  color: #999999;
+}
+
+.navbar-inverse .navbar-nav > .open > a:hover, 
+.navbar-inverse .navbar-nav > .open.active > a, 
+.navbar-inverse .navbar-nav > .open > a:focus {
+  background: #080808;
+  color: #FFFFFF;
+}
 .hidden-row {padding: 0 !important; }
 
 .label-0 { background-color: #632A17; }
@@ -36,6 +49,19 @@
 .event .label.event-important  { border: 2px solid #D43F3A; }
 .event .label.event-warning { border: 2px solid #EEA236; }
 .event .label.event-success { border: 2px solid #4CAE4C; }
+
+.btn-group > .btn, .btn-group {
+  overflow: hidden;
+}
+
+.panel-group .panel {
+  margin-bottom: 20px;
+}
+.panel-group > .panel {
+  border-radius: 4px;
+  margin-bottom: 0;
+  overflow: hidden;
+}
 
 .modal-content > .alert {
   margin: 0;
@@ -66,8 +92,12 @@
 
 .no-margins {
   margin: 0;
+  position: relative;
 }
 
+.top5 {
+  margin-top: 5px;
+}
 .top10 {
   margin-top: 10px;
 }
@@ -119,8 +149,8 @@ span.hidden-xs { display: inline !important; }
   }
 }
 
-tr.info td,
-tr.info th {
+tr.info > td,
+tr.info > th {
   border-color: #BCE8F1 !important;
   border-top: 5px solid #BCE8F1  !important;
   background-color: #EEE !important;

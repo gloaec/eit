@@ -37,8 +37,10 @@
         <% @ftps.each do |ftp| %>
           <tr>
             <td>
-              <i class="fa fa-sitemap"></i>
-	      <%= ftp.host %>
+              <a href="<%= ftp_path(ftp) %>" class="">
+                <i class="fa fa-sitemap"></i>
+	        <%= ftp.host %>
+              </a>
             </td>
             <td><%= ftp.port %></td>
             <td><%= ftp.user %></td>
@@ -57,18 +59,13 @@
             </td>
 	    <td>
               <span class="btn-group pull-right">
-                <% if can? :read, ftp %>
-                  <a href="<%= ftp_path(ftp) %>" class="btn btn-primary btn-sm">
-                    <i class="fa fa-arrow-right"></i><span class="hidden-xs"> Show</i>
-                  </a>
-                <% end %>
                 <% if can? :edit, ftp %>
-                  <a href="<%= edit_ftp_path(ftp) %>" class="btn btn-primary btn-sm">
+                  <a href="<%= edit_ftp_path(ftp) %>" class="btn btn-primary btn-xs">
                     <i class="fa fa-edit"></i><span class="hidden-xs"> Edit</span>
                   </a>
                 <% end %>
                 <% if can? :destroy, ftp %>
-                  <%= link_to ftp, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' do %>
+                  <%= link_to ftp, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-xs' do %>
                     <i class="fa fa-trash-o"></i><span class="hidden-xs"> Delete</span>
                   <% end %>
                 <% end %>

@@ -37,6 +37,9 @@ class ProgramsController < ApplicationController
 
   # GET /programs/1/edit
   def edit
+    if @program.dangers.empty?
+      redirect_to @program, flash: { error: 'The file has already been transferred. You cannot edit it anymore.' }
+    end
   end
 
   # POST /programs
@@ -60,6 +63,7 @@ class ProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @program.update(program_params)
+        @program.revalidate
         format.html { redirect_to @program, notice: 'Program was successfully updated.' }
         format.json { head :no_content }
       else
@@ -94,6 +98,27 @@ class ProgramsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def program_params
-      params.require(:program).permit(:name, :queue_path, :success_path, :error_path)
+      _params = params.require(:program).permit(:error_notify, :success_notify, events_attributes: [:id, :name, :start_at, :end_at])
+      end_at = set_program.start_at
+      
+      _params[:events_attributes].map do |key, event_params|
+
+        start_at = Time.parse("#{event_params[:start_at]} UTC", end_at)
+        if(end_at > start_at) 
+          end_at += 1.day
+          start_at = Time.parse("#{event_params[:start_at]} UTC", end_at)
+        end
+        event_params[:start_at] = start_at.iso8601
+
+        end_at = Time.parse("#{event_params[:end_at]} UTC", start_at)
+        if(start_at > end_at) 
+          start_at += 1.day
+          end_at = Time.parse("#{event_params[:end_at]} UTC", start_at)
+        end
+        event_params[:end_at] = end_at.iso8601
+
+        [key, event_params]
+      end
+      _params
     end
 end
