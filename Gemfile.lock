@@ -210,7 +210,7 @@ DEPENDENCIES
   nokogiri
   paperclip
   rails (= 4.0.1)
-  rake
+  rake (>= 10.1.1)
   rvm-capistrano
   sass-rails (~> 4.0.0)
   sdoc

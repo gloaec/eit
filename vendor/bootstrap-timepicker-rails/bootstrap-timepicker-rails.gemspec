@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
 
   gem.name          = "bootstrap-timepicker-rails"
   gem.require_paths = ["lib"]
-  gem.files         = `git ls-files`.split("\n")
+  #gem.files         = `git ls-files`.split("\n")
   gem.version       = BootstrapTimepickerRails::Rails::VERSION
 
   gem.add_dependency "railties", ">= 3.0"
