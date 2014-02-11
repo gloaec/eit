@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '4.0.1'
+gem 'rake'
 gem 'sqlite3'
 gem 'mysql2'
 gem 'sass-rails', '~> 4.0.0'
@@ -34,7 +35,8 @@ group :doc do
 end
 
 group :development do
-  gem 'capistrano'
+  #gem 'capistrano'
+  gem 'rvm-capistrano'
 end
 
 # Use ActiveModel has_secure_password
