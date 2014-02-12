@@ -56,20 +56,20 @@ me = User.create!({
 
 channel1 = Channel.create({
   name:         "NRJ Paris",
-  queue_path:   "/home/guest/EIT/NRJParis_pending",
-  error_path:   "/home/guest/EIT/NRJParis_error"
+  queue_path:   "/eit/NRJParis_pending",
+  error_path:   "/eit/NRJParis_error"
 })
 
 channel2 = Channel.create({
   name:         "NRJ 12",
-  queue_path:   "/home/guest/EIT/NRJ12_pending",
-  error_path:   "/home/guest/EIT/NRJ12_error"
+  queue_path:   "/eit/NRJ12_pending",
+  error_path:   "/eit/NRJ12_error"
 })
 
 channel3 = Channel.create({
   name:         "Chérie 25",
-  queue_path:   "/home/guest/EIT/Cherie25_pending",
-  error_path:   "/home/guest/EIT/Cherie25_error"
+  queue_path:   "/eit/Cherie25_pending",
+  error_path:   "/eit/Cherie25_error"
 })
 
 
