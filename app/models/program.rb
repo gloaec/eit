@@ -232,10 +232,12 @@ class Program < ActiveRecord::Base
       )
     ensure
       #p "LOADED : #{self.errors.loaded?}"
-      self.save
+      self.save!
     end 
 
     p "   [#{self.dangers.any? ? 'ERROR' : 'SUCCESS'}] #{self.dangers.count} errors / #{self.warnings.count} warnings detected"
+
+    logger.info "notify_error: #{self.notify_error}"
 
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."

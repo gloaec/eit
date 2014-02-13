@@ -55,16 +55,14 @@
     <div class="col-xs-4">
       <div class="btn-group btn-group-justified form-inline" data-toggle="buttons">
         <label class="btn btn-default <%= 'active' if @program.notify_success %>">
-          <input type="checkbox" name="program[notify_success]" value="1"
-          <%= 'checked="checked"' if @program.notify_success %>>
+          <%= f.check_box :notify_success %>
           <span class="text-success">
             <i class="fa fa-envelope"></i>
             <span class="hidden-xs"><%= t :notify_success %></span>
           </span>
         </label>
         <label class="btn btn-default <%= 'active' if @program.notify_error %>">
-          <input type="checkbox" name="program[notify_error]" value="1"
-          <%= 'checked="checked"' if @program.notify_error %>>
+          <%= f.check_box :notify_error %>
           <span class="text-danger">
             <i class="fa fa-envelope"></i>
             <span class="hidden-xs"><%= t :error_notify %></span>

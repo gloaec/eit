@@ -18,10 +18,10 @@
 
       <tr class="<%= errors.any? ? "alert alert-#{errors.first.classname}" : previous_event.name == event.name ? "default" : "info" %>">
         <th>
-          <a href="<%= edit_event_path(event) %>">
+          <!--a href="<%= edit_event_path(event) %>"-->
             <i class="fa fa-play-circle"></i>
             <%= event.name.humanize %>  
-          </a>
+          <!--/a-->
           <% unless errors.empty? %>
             <ul class="no-margins">
               <% errors.each do |error| %>

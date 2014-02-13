@@ -64,9 +64,12 @@ class ProgramsController < ApplicationController
     respond_to do |format|
       if @program.update(program_params)
         begin
+          @program.reload
           @program.revalidate
         rescue Net::OpenTimeout
           format.html { redirect_to @program, notice: 'Program was validated but email was not sent..' }
+        rescue Exception => e
+          format.html { redirect_to @program, notice: "Error: #{e}" }
         else
           format.html { redirect_to @program, notice: 'Program was successfully updated.' }
         end
