@@ -22,7 +22,11 @@ class Channel < ActiveRecord::Base
   after_save :update_directories
 
   def channel_path
-    File.join(Rails.root, 'channels', self.id.to_s)
+    if Rails.env == "production"
+      File.expand_path(File.join(Rails.root, '..', '..', 'shared', 'channels', self.id.to_s))
+    else 
+      File.join(Rails.root, 'channels', self.id.to_s)
+    end
   end
 
   def update_directories

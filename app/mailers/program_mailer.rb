@@ -2,6 +2,10 @@ class ProgramMailer < ActionMailer::Base
   default from: "ghis182@gmail.com"
   layout 'mail'
 
+  def default_url_options
+    ActionMailer::Base.default_url_options = {:host => 'eit-ubuntu.nrjtv.fr'}
+  end
+
   def success_notification(user, program)
     @program = program
     @user = user

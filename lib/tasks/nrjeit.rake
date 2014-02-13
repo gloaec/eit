@@ -49,7 +49,11 @@ task :validate, [:paths] => :environment do |t, args|
         :line => nil
       )
     else
-      program.validate
+      begin
+        program.validate
+      rescue => e
+        puts e.message
+      end
     end
 
     #begin

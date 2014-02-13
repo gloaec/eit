@@ -37,7 +37,7 @@
         </th>
         <% tag = previous_event.name == event.name ? "td" : "th" %>
         <<%= tag %>>
-          <fieldset class="form-group has-<%= classname_b %> no-margins" id="timepicker_<%= event.id %>_1" disabled>
+          <fieldset class="form-group has-<%= classname_b %> no-margins" id="timepicker_<%= event.id %>_1">
             <div class="input-group bootstrap-timepicker">
               <span class="input-group-addon"><i class="fa fa-play text-success"></i></span>
               <%= ff.text_field :start_at, class: "form-control timepicker", value: event.start_at.strftime("%H:%M:%S"), data: {time: event.start_at.strftime("%H:%M:%S"), target: "#timepicker_#{event.id}_1"} %>
@@ -94,12 +94,12 @@
         </<%= tag %>>
         <td>
           <% if gap %>
-            <div class="form-group has-<%= classname_b %> no-margins" id="timepicker_<%= event.id %>_4">
+            <fieldset class="form-group has-<%= classname_b %> no-margins" id="timepicker_<%= event.id %>_4" disabled>
               <div class="input-group bootstrap-timepicker">
                 <span class="input-group-addon"><i class="fa fa-clock-o text-muted"></i></span>
                 <%= text_field_tag :gap, "#{'-' if reverse}#{gap.strftime("%H:%M:%S")}", class: "form-control timepicker", data: {time: "#{'-' if reverse}#{gap.strftime("%H:%M:%S")}", target: "#timepicker_#{event.id}_4"}  %>
               </div>
-            </div>
+            </fieldset>
           <% end %>
         </td>
       </tr>

@@ -63,8 +63,13 @@ class ProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @program.update(program_params)
-        @program.revalidate
-        format.html { redirect_to @program, notice: 'Program was successfully updated.' }
+        begin
+          @program.revalidate
+        rescue Net::OpenTimeout
+          format.html { redirect_to @program, notice: 'Program was validated but email was not sent..' }
+        else
+          format.html { redirect_to @program, notice: 'Program was successfully updated.' }
+        end
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
@@ -98,7 +103,7 @@ class ProgramsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def program_params
-      _params = params.require(:program).permit(:error_notify, :success_notify, events_attributes: [:id, :name, :start_at, :end_at])
+      _params = params.require(:program).permit(:notify_error, :notify_success, events_attributes: [:id, :name, :start_at, :end_at])
       end_at = set_program.start_at
       
       _params[:events_attributes].map do |key, event_params|

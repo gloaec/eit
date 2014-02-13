@@ -140,8 +140,8 @@ class Program < ActiveRecord::Base
 
           if durationgap.nil?
           elsif durationgap <= 0 or
-                (durationgap < self.channel.min_duration_error and self.channel.min_duration_error > 0) or
-                (durationgap > self.channel.max_duration_error and self.channel.max_duration_error > 0)
+                (durationgap <= self.channel.min_duration_error and self.channel.min_duration_error > 0) or
+                (durationgap >= self.channel.max_duration_error and self.channel.max_duration_error > 0)
             self.dangers.build(
               before_event: event,
               after_event:  event,
@@ -149,8 +149,8 @@ class Program < ActiveRecord::Base
               msg:          "Wrong event duration",
               line:         event_node.line
             )
-          elsif (durationgap < self.channel.min_duration_warning and self.channel.min_duration_warning > 0) or
-                (durationgap > self.channel.max_duration_warning and self.channel.max_duration_warning > 0)
+          elsif (durationgap <= self.channel.min_duration_warning and self.channel.min_duration_warning > 0) or
+                (durationgap >= self.channel.max_duration_warning and self.channel.max_duration_warning > 0)
             self.warnings.build(
               before_event: event,
               after_event:  event,
@@ -161,9 +161,9 @@ class Program < ActiveRecord::Base
           end
 
           if gap.nil?
-          elsif gap <= 0 or
-                (gap < self.channel.min_gap_error and self.channel.min_gap_error > 0) or
-                (gap > self.channel.max_gap_error and self.channel.max_gap_error > 0)
+          elsif gap > 0 or gap < 0
+                (gap <= self.channel.min_gap_error and self.channel.min_gap_error > 0) or
+                (gap >= self.channel.max_gap_error and self.channel.max_gap_error > 0)
             self.dangers.build(
               before_event: before_event,
               after_event:  event,
@@ -171,8 +171,8 @@ class Program < ActiveRecord::Base
               msg:          "Wrong time gap",
               line:         event_node.line
             )
-          elsif (gap < self.channel.min_gap_warning and self.channel.min_gap_warning > 0) or
-                (gap > self.channel.max_gap_warning and self.channel.max_gap_warning > 0)
+          elsif (gap <= self.channel.min_gap_warning and self.channel.min_gap_warning > 0) or
+                (gap >= self.channel.max_gap_warning and self.channel.max_gap_warning > 0)
             self.warnings.build(
               before_event: before_event,
               after_event:  event,
@@ -239,7 +239,7 @@ class Program < ActiveRecord::Base
 
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
-      FileUtils.mv @xml_file, self.channel.error_path unless FileUtils.identical?(@xml_file, File.join(self.channel.error_path, self.xml_file_name))
+      FileUtils.mv @xml_file, self.channel.error_path unless File.exists?(File.join(self.channel.error_path, self.xml_file_name)) and FileUtils.identical?(@xml_file, File.join(self.channel.error_path, self.xml_file_name))
       self.error_notification if self.notify_error
     else 
       self.transfer

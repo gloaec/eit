@@ -21,11 +21,6 @@ class ApplicationController < ActionController::Base
     @channels = Channel.all.select {|_| can?(:read, _)}
   end
 
-  def default_url_options
-    ActionMailer::Base.default_url_options = {:host => 'ghis.x64.me:7777'}
-    {}
-  end
-
   def current_ability
     current_user.ability
   end
