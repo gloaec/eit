@@ -205,6 +205,8 @@ class Program < ActiveRecord::Base
 
     logger.info "notify_error: #{self.notify_error}"
 
+    self.dangers.reload
+
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
       FileUtils.mv @xml_file, self.channel.error_path unless File.exists?(File.join(self.channel.error_path, self.xml_file_name)) and FileUtils.identical?(@xml_file, File.join(self.channel.error_path, self.xml_file_name))

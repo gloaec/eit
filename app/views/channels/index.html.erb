@@ -123,9 +123,9 @@
                       Configuration
                     </h3>
                     <span class="pull-right">
-                      <span class="label label-default"><i class="fa fa-upload"></i> 3</span>
-                      <span class="label label-success"><i class="fa fa-envelope"></i> 3</span>
-                      <span class="label label-danger"><i class="fa fa-envelope"></i> 1</span>
+                      <span class="label label-default"><i class="fa fa-upload"></i> <%= channel.channel_ftps.count %></span>
+                      <span class="label label-success"><i class="fa fa-envelope"></i> <%= channel.success_contacts.count %></span>
+                      <span class="label label-danger"><i class="fa fa-envelope"></i> <%= channel.error_contacts.count %></span>
                     </span>
                   </a>
                 </div>
