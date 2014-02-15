@@ -9,6 +9,7 @@ class Program < ActiveRecord::Base
   has_attached_file :xml
 
   accepts_nested_attributes_for :events, allow_destroy: true
+  accepts_nested_attributes_for :dangers, allow_destroy: true
 
   def xml_file
     @xml_file ||=
@@ -182,43 +183,8 @@ class Program < ActiveRecord::Base
             )
           end
 
-          #elsif gap == 0
-          #  self.dangers.build(
-          #    before_event: before_event,
-          #    after_event:  event,
-          #    code:         ProgramError::GAP_ERROR,
-          #    msg:          'No time gap',
-          #    line:         event_node.line
-          #  )
-          #elsif gap.to_i > 3600
-          #  self.dangers.build(
-          #    before_event: before_event,
-          #    after_event:  event,
-          #    :code => ProgramError::ERROR_GAP,
-          #    :msg => 'Time gap error',
-          #    :line => event_node.line
-          #  )
-          #elsif gap > 600
-          #  self.warnings.build(
-          #    before_event: before_event,
-          #    after_event:  event,
-          #    :code => ProgramError::WARNING_GAP,
-          #    :msg => 'Long time gap',
-          #    :line => event_node.line
-          #  )
-          #end 
-
           before_event = event
 
-          #p "------------------------------------"
-          #p "  timegap  : #{timegap[:hours].to_i}:#{timegap[:minutes].to_i}:#{timegap[:seconds].to_i}" unless timegap.nil?
-          #p "  seconds  : #{gap}"
-          #p "===================================="
-          #p "#{name}:" 
-          #p "===================================="
-          #p "  start    : #{start_at.strftime("%d/%m/%Y %H:%M:%S")}"
-          #p "  duration : #{duration.hour}:#{duration.min}:#{duration.sec}"
-          #p "  end      : #{end_at.strftime("%d/%m/%Y %H:%M:%S")}"
         end
 
       end
@@ -253,6 +219,25 @@ class Program < ActiveRecord::Base
 
     f.close
     
+  end
+
+  def autocorrect
+    self.dangers.each do |danger|
+      case danger.code.to_i
+      when ProgramError::GAP_ERROR
+        if danger.before_event.end_at < danger.after_event.start_at     
+          gap_seconds = TimeDifference.between(danger.before_event.end_at, danger.after_event.start_at).in_seconds
+          gap_adjust = (gap_seconds/2).to_i #Time.at(e/2).utc
+          danger.after_event.start_at = danger.before_event.end_at += gap_adjust
+        elsif danger.before_event.end_at > danger.after_event.start_at     
+          gap_seconds = TimeDifference.between(danger.after_event.start_at, danger.before_event.end_at).in_seconds
+          gap_adjust = (gap_seconds/2).to_i #Time.at(e/2).utc
+          danger.after_event.start_at = danger.before_event.end_at -= gap_adjust
+        end
+      when ProgramError::DURATION_ERROR
+      end     
+    end
+    self.save!
   end
 
 

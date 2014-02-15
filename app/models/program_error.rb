@@ -2,6 +2,7 @@ class ProgramError < ActiveRecord::Base
   belongs_to :program
   belongs_to :before_event, class_name: 'Event'
   belongs_to :after_event, class_name: 'Event'
+  accepts_nested_attributes_for :before_event, :after_event
 
   FILE = -2
   OTHER = -1

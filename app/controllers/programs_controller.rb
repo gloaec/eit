@@ -65,11 +65,12 @@ class ProgramsController < ApplicationController
       if @program.update(program_params)
         begin
           @program.reload
+          @program.autocorrect if params[:autocorrect] == "1"
           @program.revalidate
         rescue Net::OpenTimeout
           format.html { redirect_to @program, notice: 'Program was validated but email was not sent..' }
-        rescue Exception => e
-          format.html { redirect_to @program, notice: "Error: #{e}" }
+        #rescue Exception => e
+        #  format.html { redirect_to @program, notice: "Error: #{e}" }
         else
           format.html { redirect_to @program, notice: 'Program was successfully updated.' }
         end
@@ -108,22 +109,34 @@ class ProgramsController < ApplicationController
     def program_params
       _params = params.require(:program).permit(:notify_error, :notify_success, events_attributes: [:id, :name, :start_at, :end_at])
       end_at = set_program.start_at
-      
+      before_event = nil      
+
       _params[:events_attributes].map do |key, event_params|
+         
+        event = @program.events.find(event_params[:id])
 
         start_at = Time.parse("#{event_params[:start_at]} UTC", end_at)
-        if(end_at > start_at) 
-          end_at += 1.day
-          start_at = Time.parse("#{event_params[:start_at]} UTC", end_at)
+        test = false
+        if(end_at > start_at)
+          gap = TimeDifference.between(start_at, end_at).in_hours
+          if gap > 12
+            end_at += 1.day
+            start_at = Time.parse("#{event_params[:start_at]} UTC", end_at)
+          end
         end
         event_params[:start_at] = start_at.iso8601
 
         end_at = Time.parse("#{event_params[:end_at]} UTC", start_at)
         if(start_at > end_at) 
-          start_at += 1.day
-          end_at = Time.parse("#{event_params[:end_at]} UTC", start_at)
+          gap = TimeDifference.between(end_at, start_at).in_hours
+          if gap > 12
+            start_at += 1.day
+            end_at = Time.parse("#{event_params[:end_at]} UTC", start_at)
+          end
         end
         event_params[:end_at] = end_at.iso8601
+
+        before_event = event
 
         [key, event_params]
       end

@@ -54,6 +54,8 @@
       <% errors = event.gap_errors %>
       <% reverse = false %>
 
+      <% if errors.any? or next_event.end_at.nil? %>
+
       <% unless next_event.end_at.nil? %>
         <% if event.end_at <= next_event.start_at %>
           <% gap = TimeDifference.between(event.end_at, next_event.start_at).in_general %>
@@ -62,7 +64,7 @@
           <% gap = TimeDifference.between(next_event.start_at, event.end_at).in_general %>
         <% end %>
       <% end %>
-
+      
       <tr class="<%= errors.any? ? "alert alert-#{errors.first.classname}" : "text-muted" %>">
         <td>
           <% if errors.empty? %>
@@ -100,6 +102,7 @@
           <% end %>
         </td>
       </tr>
+      <% end %>
 
       <% previous_event = event %>
 
