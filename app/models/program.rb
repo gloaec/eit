@@ -18,6 +18,15 @@ class Program < ActiveRecord::Base
       else
         File.join self.channel.queue_path, self.xml_file_name
       end
+    unless File.exists?(@xml_file)
+      @xml_file = 
+        if self.dangers.any?
+          File.join self.channel.queue_path, self.xml_file_name
+        else
+          File.join self.channel.error_path, self.xml_file_name
+        end
+    end
+    @xml_file
   end
 
   def success_notification

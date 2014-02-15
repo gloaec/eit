@@ -37,7 +37,7 @@ class ProgramsController < ApplicationController
 
   # GET /programs/1/edit
   def edit
-    if @program.dangers.empty?
+    unless File.exists?(@program.xml_file)
       redirect_to @program, flash: { error: 'The file has already been transferred. You cannot edit it anymore.' }
     end
   end
@@ -68,7 +68,9 @@ class ProgramsController < ApplicationController
           @program.autocorrect if params[:autocorrect] == "1"
           @program.revalidate
         rescue Net::OpenTimeout
-          format.html { redirect_to @program, notice: 'Program was validated but email was not sent..' }
+          format.html { redirect_to @program, flash: { warning: 'Program was validated but email was not sent..' }}
+        rescue Net::FTPConnectionError
+          format.html { redirect_to @program, flash: { warning: 'Program was validated but could\'t be transferred' }}
         #rescue Exception => e
         #  format.html { redirect_to @program, notice: "Error: #{e}" }
         else
