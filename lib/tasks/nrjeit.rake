@@ -21,6 +21,18 @@ task :validate, [:paths] => :environment do |t, args|
     
     p "Processing #{path}..."
 
+    # Wait for file to be transferred
+    filesize = -1
+    retries = 0
+    while filesize != File.size(path)
+      filesize = File.size(path)
+      sleep 1
+      retry += 1
+      break if retries > 10
+    end
+
+    p "> Ready !"
+
     f, program, channel = nil
     channel_id = File.basename(File.dirname(path)).to_i
     if channel_id != 0
