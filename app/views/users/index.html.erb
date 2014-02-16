@@ -97,7 +97,7 @@
         <td><%= user.role %></td>
         <% Channel.all.each do |channel| %>
           <td>
-            <% if user.can? :manage, channel %>
+            <% if user.can? :edit, channel %>
               <i class="fa fa-edit"></i>
             <% elsif user.can? :read, channel %>
               <i class="fa fa-eye"></i>

@@ -9,7 +9,7 @@
       <ol class="breadcrumb">
         <li><a href="<%= root_url %>"><i class="fa fa-home"></i> Home</a></li>
         <li><a href="<%= programs_url %>"><i class="fa fa-th"></i> Programs</a></li>
-        <li class="active"><i class="fa fa-calendar"></i> <span class="date" data-datetime="<%= @program.start_at.iso8601 %>"></span></li>
+        <li class="active"><i class="fa fa-calendar"></i> <span class="date" data-datetime="<%= @program.start_at.nil? ? "" : @program.start_at.iso8601 %>"></span><%= t(:unknown) if @program.start_at.nil? %></li>
       </ol>
     </div>
     <div class="col-xs-2">

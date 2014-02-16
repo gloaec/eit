@@ -1,11 +1,12 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
   load_and_authorize_resource
+  #skip_authorize_resource :only => :sessions
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
-  rescue_from CanCan::AccessDenied do |exception|
-    redirect_to root_url, :alert => exception.message
-  end
+  #rescue_from CanCan::AccessDenied do |exception|
+  #  redirect_to root_url, :alert => exception.message
+  #end
 
   # GET /users
   # GET /users.json
@@ -101,19 +102,21 @@ class UsersController < ApplicationController
     end
 
     def build_contact_channels
-      user_params[:user_channels_attributes].each do |k, contact_channel|
-        success_channel = @user.success_contact_channels.where(channel_id: contact_channel[:channel_id]).first
-        error_channel = @user.error_contact_channels.where(channel_id: contact_channel[:channel_id]).first
-        if contact_channel[:success]
-          @user.success_contact_channels.build(channel_id: contact_channel[:channel_id]) unless success_channel
-        else 
-          success_channel.destroy unless success_channel.nil?
+      unless user_params[:user_channels_attributes].nil?
+        user_params[:user_channels_attributes].each do |k, contact_channel|
+          success_channel = @user.success_contact_channels.where(channel_id: contact_channel[:channel_id]).first
+          error_channel = @user.error_contact_channels.where(channel_id: contact_channel[:channel_id]).first
+          if contact_channel[:success]
+            @user.success_contact_channels.build(channel_id: contact_channel[:channel_id]) unless success_channel
+          else 
+            success_channel.destroy unless success_channel.nil?
+          end
+          if contact_channel[:error]
+            @user.error_contact_channels.build(channel_id: contact_channel[:channel_id]) unless error_channel
+          else 
+            error_channel.destroy unless error_channel.nil?
+          end 
         end
-        if contact_channel[:error]
-          @user.error_contact_channels.build(channel_id: contact_channel[:channel_id]) unless error_channel
-        else 
-          error_channel.destroy unless error_channel.nil?
-        end 
       end
     end
 end

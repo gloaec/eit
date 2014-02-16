@@ -12,8 +12,13 @@ class ApplicationController < ActionController::Base
     params[resource] &&= send(method) if respond_to?(method, true)
   end
 
-  rescue_from CanCan::AccessDenied do |exception|
-    redirect_to root_url, :alert => exception.message
+  rescue_from CanCan::AccessDenied do |e|
+    if current_user.role? 'contact'
+      sign_out current_user
+      redirect_to new_user_session_path, flash: { error: e.message }
+    else
+      redirect_to root_path #new_user_session_path #, :alert => exception.message
+    end
   end
 
   def set_channels

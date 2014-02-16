@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
 
   create_table "events", force: true do |t|
     t.string   "name"
-    t.string   "description"
+    t.text     "description"
     t.integer  "minimum_age"
     t.datetime "start_at"
     t.datetime "end_at"

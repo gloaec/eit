@@ -40,6 +40,7 @@ task :validate, [:paths] => :environment do |t, args|
       f = File.open(path)
       program = Program.find_or_create_by_xml_file_name(File.basename(path))
       program.start_at = start_at
+      program.end_at = start_at
       program.program_errors.destroy_all
       program.events.destroy_all
       program.xml = f
