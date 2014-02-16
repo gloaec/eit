@@ -18,30 +18,38 @@ task :validate, [:paths] => :environment do |t, args|
  
     next unless File.exists? path
     next unless File.extname(path) == ".xml"
-
-    f, program = nil
-    channel_id = File.basename(File.dirname(path)).to_i
-    channel = Channel.find(channel_id)
-
-    p "[#{channel.name}] Processing #{path}..."
     
-    #TODO: Extract start_time with regex on file name
+    p "Processing #{path}..."
+
+    f, program, channel = nil
+    channel_id = File.basename(File.dirname(path)).to_i
+    if channel_id != 0
+      channel = Channel.find(channel_id)
+      p "  Channel: #{channel.name}"
+    else
+      p "  Channel: Not found !"
+    end
+ 
+    start_at = path.match(/_(\d+)_(\d+)_(\d+)_(\d+)_(\d+)\.xml$/) do |d|
+      Time.parse("#{d[1]}/#{d[2]}/#{d[3]} #{d[4]}:#{d[5]} UTC")
+    end
 
     chmoded = 0
 
     begin
       f = File.open(path)
       program = Program.find_or_create_by_xml_file_name(File.basename(path))
+      program.start_at = start_at
       program.program_errors.destroy_all
       program.events.destroy_all
       program.xml = f
       program.channel = channel
-      program.save
+      program.save!
     rescue => e
       File.chmod(0755, path) rescue nil
       chmoded += 1
       retry if chmoded < 2
-      puts e.message
+      puts "Program Init Error : #{e.message}"
       program.dangers.create(
         :classname => 'danger',
         :code => ProgramError::FILE,
@@ -52,7 +60,7 @@ task :validate, [:paths] => :environment do |t, args|
       begin
         program.validate
       rescue => e
-        puts e.message
+        puts "Recued Error : #{e.message}"
       end
     end
 
