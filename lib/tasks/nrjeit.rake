@@ -27,7 +27,7 @@ task :validate, [:paths] => :environment do |t, args|
     while filesize != File.size(path)
       filesize = File.size(path)
       sleep 1
-      retry += 1
+      retries += 1
       break if retries > 10
     end
 

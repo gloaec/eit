@@ -267,7 +267,6 @@ class Program < ActiveRecord::Base
     event_nodes = doc.css("EVENT")
     self.events.each_with_index do |event, i|
       node = event_nodes[i]
-      p node.css('NAME').first.content
       node.css("NAME").first.inner_html = event.name
       node['time'] = event.start_at.in_time_zone('Berlin').iso8601
       duration = Time.at(TimeDifference.between(event.start_at, event.end_at).in_seconds).utc
