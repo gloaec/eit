@@ -64,7 +64,7 @@ class Program < ActiveRecord::Base
           p "   => OK"
         end
       rescue Timeout::Error
-        results[cd.id] = "#{f.host}:#{remote_path}"
+        results[cf.id] = "#{f.user}@#{f.host}:#{remote_path}"
       ensure
         ftp.close unless ftp.nil?
       end

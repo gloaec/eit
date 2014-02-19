@@ -78,7 +78,7 @@ class ProgramsController < ApplicationController
           if results.empty?
             format.html { redirect_to @program, notice: 'Program was successfully updated.' }
           else
-            ftps = results.join(', ')
+            ftps = results.map {|k, v| "<a href=\"#{edit_ftp_path(ChannelFtp.find(k.to_i).ftp)}\">#{v}</a>"}.join(', ')
             format.html { redirect_to @program, flash: { warning: "Program was validated but could\'t be transferred to : #{ftps}.<br /><strong>Make sure passive mode is enabled</strong>" }}
           end
         end
