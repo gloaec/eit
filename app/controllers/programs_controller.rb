@@ -37,7 +37,7 @@ class ProgramsController < ApplicationController
 
   # GET /programs/1/edit
   def edit
-    unless File.exists?(@program.xml_file)
+    unless File.exists?(@program.xml.path)
       redirect_to @program, flash: { error: 'The file has already been transferred. You cannot edit it anymore.' }
     end
   end
