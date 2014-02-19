@@ -43,11 +43,11 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :passive, class: 'control-label col-sm-3' do %>Mode<% end %>
+    <%= f.label :passive, class: 'control-label col-sm-3' do %><%= t :passive_mode %><% end %>
     <div class="col-sm-6">
       <div class="btn-group">
-        <button type="button" class="btn btn-default btn-mode" value="1"><%= t :active %></button>
-        <button type="button" class="btn btn-default btn-mode" value="0"><%= t :passive %></button>
+        <button type="button" class="btn btn-default btn-mode" value="1"><%= t :enabled %></button>
+        <button type="button" class="btn btn-default btn-mode" value="0"><%= t :disabled %></button>
       </div>
     </div>
     <%= f.check_box :passive, class: 'hidden' %>
@@ -91,6 +91,14 @@
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
 	}
+        setTimeout(function(){
+          $('.btn-ping')
+          .button('reset').empty()
+          .removeClass('btn-success btn-danger')
+          .addClass('btn-info')
+          .append($('<i>').addClass('fa fa-signal'))
+          .append(' Ping Ftp');
+        }, 3000);
       }).error(function(){
 	  $('.btn-ping')
 	  .button('reset').empty()
@@ -98,15 +106,15 @@
 	  .addClass('btn-danger')
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
+        setTimeout(function(){
+          $('.btn-ping')
+          .button('reset').empty()
+          .removeClass('btn-success btn-danger')
+          .addClass('btn-info')
+          .append($('<i>').addClass('fa fa-signal'))
+          .append(' Ping Ftp');
+        }, 3000);
       });
-      setTimeout(function(){
-        $('.btn-ping')
-        .button('reset').empty()
-        .removeClass('btn-success btn-danger')
-        .addClass('btn-info')
-        .append($('<i>').addClass('fa fa-signal'))
-        .append(' Ping Ftp');
-      }, 3000);
     });
 
     $('.btn-mode').each(function(){

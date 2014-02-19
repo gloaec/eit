@@ -1,4 +1,5 @@
 require 'net/ftp'
+require 'timeout'
 
 class Program < ActiveRecord::Base
   belongs_to :channel
@@ -51,15 +52,19 @@ class Program < ActiveRecord::Base
 
       p "   Transferring to #{f.user}@#{f.host}:#{remote_path}..."
 
-      begin 
-        ftp = Net::FTP.new
-        ftp.passive = f.passive || false
-        ftp.connect(f.host, f.port) 
-        ftp.login f.user, f.password
-        ftp.chdir(remote_path)
-        ftp.put(self.xml.path)
-        ftp.quit
-        p "   => OK"
+      begin
+        Timeout::timeout(10) do
+          ftp = Net::FTP.new
+          ftp.passive = f.passive || false
+          ftp.connect(f.host, f.port) 
+          ftp.login f.user, f.password
+          ftp.chdir(remote_path)
+          ftp.put(self.xml.path)
+          ftp.quit
+          p "   => OK"
+        end
+      rescue Timeout::Error
+        results[cd.id] = "#{f.host}:#{remote_path}"
       ensure
         ftp.close unless ftp.nil?
       end
@@ -213,6 +218,8 @@ class Program < ActiveRecord::Base
     pending_file = File.join self.channel.queue_path, self.xml_file_name
     error_file = File.join self.channel.error_path, self.xml_file_name
 
+    results = []
+ 
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
       FileUtils.cp self.xml.path, error_file
@@ -220,7 +227,7 @@ class Program < ActiveRecord::Base
       #unless File.exists?(File.join(self.channel.error_path, self.xml_file_name)) and FileUtils.identical?(self.xml.path, File.join(self.channel.error_path, self.xml_file_name))
       self.error_notification if self.notify_error
     else 
-      self.transfer
+      results = self.transfer
       FileUtils.rm pending_file if File.exists? pending_file
       FileUtils.rm error_file if File.exists? error_file
       self.success_notification if self.notify_success
@@ -230,6 +237,7 @@ class Program < ActiveRecord::Base
 
     f.close
     
+    results
   end
 
   def autocorrect

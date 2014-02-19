@@ -62,11 +62,12 @@ class ProgramsController < ApplicationController
   # PATCH/PUT /programs/1.json
   def update
     respond_to do |format|
+      results = []
       if @program.update(program_params)
         begin
           @program.reload
           @program.autocorrect if params[:autocorrect] == "1"
-          @program.revalidate
+          results = @program.revalidate
         rescue Net::OpenTimeout
           format.html { redirect_to @program, flash: { warning: 'Program was validated but email was not sent..' }}
         rescue Net::FTPConnectionError
@@ -74,7 +75,12 @@ class ProgramsController < ApplicationController
         #rescue Exception => e
         #  format.html { redirect_to @program, notice: "Error: #{e}" }
         else
-          format.html { redirect_to @program, notice: 'Program was successfully updated.' }
+          if results.empty?
+            format.html { redirect_to @program, notice: 'Program was successfully updated.' }
+          else
+            ftps = results.join(', ')
+            format.html { redirect_to @program, flash: { warning: "Program was validated but could\'t be transferred to : #{ftps}.<br /><strong>Make sure passive mode is enabled</strong>" }}
+          end
         end
         format.json { head :no_content }
       else

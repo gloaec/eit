@@ -1,4 +1,4 @@
-<% @channel_ftp = @channel.channel_ftps.new %>
+<% @channel_ftp = @channel.channel_ftps.new(success_path: '/') %>
 
 <%= form_for [@channel, @channel_ftp], html: { class: 'form-horizontal' } do |f| %>
 
@@ -54,19 +54,19 @@
               </div>
             </div>
             <div class="form-group">
-              <%= ff.label :passive, class: 'control-label col-sm-3' do %>Mode<% end %>
-              <div class="col-sm-6">
+              <%= ff.label :passive, class: 'control-label col-sm-3' do %><%= t :passive_mode %><% end %>
+              <fieldset class="col-sm-6">
                 <div class="btn-group">
-                  <button type="button" class="btn btn-default btn-mode" value="1"><%= t :active %></button>
-                  <button type="button" class="btn btn-default btn-mode" value="0"><%= t :passive %></button>
+                  <button type="button" class="btn btn-default btn-mode" value="1"><%= t :enabled %></button>
+                  <button type="button" class="btn btn-default btn-mode" value="0"><%= t :disabled %></button>
                 </div>
-              </div>
-              <%= ff.check_box :passive, class: 'hidden' %>
+                <%= ff.check_box :passive, class: 'hidden' %>
+              </fieldset>
 	      <div class="col-sm-3">
-  	      <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-info btn-ping pull-right">
-                <i class="fa fa-signal"></i>
-  	        <%= t :ping_ftp %>
-  	      </button>
+  	        <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-info btn-ping pull-right">
+                  <i class="fa fa-signal"></i>
+  	          <%= t :ping_ftp %>
+  	        </button>
               </div>
             </div>
             <div class="form-group">
@@ -137,6 +137,14 @@
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
 	}
+        setTimeout(function(){
+          $('.btn-ping')
+          .button('reset').empty()
+          .removeClass('btn-success btn-danger')
+          .addClass('btn-info')
+          .append($('<i>').addClass('fa fa-signal'))
+          .append(' Ping Ftp');
+        }, 3000);
       }).error(function(){
 	  $('.btn-ping')
 	  .button('reset').empty()
@@ -145,14 +153,6 @@
 	  .append($('<i>').addClass('fa fa-unlink'))
 	  .append(' Error');
       });
-      setTimeout(function(){
-        $('.btn-ping')
-        .button('reset').empty()
-        .removeClass('btn-success btn-danger')
-        .addClass('btn-info')
-        .append($('<i>').addClass('fa fa-signal'))
-        .append(' Ping Ftp');
-      }, 3000);
     });
 
     $('.btn-mode').each(function(){
@@ -175,7 +175,7 @@
         $('#channel_ftp_ftp_attributes_host')    .prop('disabled', false).val(ftp_bkp.host)
         $('#channel_ftp_ftp_attributes_port')    .prop('disabled', false).val(ftp_bkp.port)
         $('#channel_ftp_ftp_attributes_password').prop('disabled', false).val(ftp_bkp.password_digest)
-        $('#channel_ftp_ftp_attributes_passive') .prop('disabled', false).val(ftp_bkp.passive)
+        $('#channel_ftp_ftp_attributes_passive').parent().prop('disabled', false).val(ftp_bkp.passive)
       } else {
         var ftp = null;
         ftp_bkp = form_ftp();
@@ -186,9 +186,9 @@
         $('#channel_ftp_ftp_attributes_host')    .prop('disabled', true).val(ftp.host)
         $('#channel_ftp_ftp_attributes_port')    .prop('disabled', true).val(ftp.port)
         $('#channel_ftp_ftp_attributes_password').prop('disabled', true).val(ftp.password_digest)
-        $('#channel_ftp_ftp_attributes_passive') .prop('disabled', true).val(ftp.passive)
+        $('#channel_ftp_ftp_attributes_passive').parent().prop('disabled', true).val(ftp.passive)
       }
-    });
+    }).trigger('change');
 
   }(jQuery));
 </script>
