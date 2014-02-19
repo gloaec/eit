@@ -11,23 +11,23 @@ class Program < ActiveRecord::Base
   accepts_nested_attributes_for :events, allow_destroy: true
   accepts_nested_attributes_for :dangers, allow_destroy: true
 
-  def xml_file
-    @xml_file ||=
-      if self.dangers.any?
-        File.join self.channel.error_path, self.xml_file_name
-      else
-        File.join self.channel.queue_path, self.xml_file_name
-      end
-    unless File.exists?(@xml_file)
-      @xml_file = 
-        if self.dangers.any?
-          File.join self.channel.queue_path, self.xml_file_name
-        else
-          File.join self.channel.error_path, self.xml_file_name
-        end
-    end
-    @xml_file
-  end
+  #def xml_file
+  #  @xml_file ||=
+  #    if self.dangers.any?
+  #      File.join self.channel.error_path, self.xml_file_name
+  #    else
+  #      File.join self.channel.queue_path, self.xml_file_name
+  #    end
+  #  unless File.exists?(@xml_file)
+  #    @xml_file = 
+  #      if self.dangers.any?
+  #        File.join self.channel.queue_path, self.xml_file_name
+  #      else
+  #        File.join self.channel.error_path, self.xml_file_name
+  #      end
+  #  end
+  #  @xml_file
+  #end
 
   def success_notification
     self.channel.success_contacts.each do |user|
@@ -56,15 +56,10 @@ class Program < ActiveRecord::Base
         ftp.passive = f.passive || false
         ftp.connect(f.host, f.port) 
         ftp.login f.user, f.password
-        
-        files = ftp.chdir(remote_path)
-        files = ftp.list
-        #p files
-        ftp.put(@xml_file)
+        ftp.chdir(remote_path)
+        ftp.put(self.xml.path)
         ftp.quit
-        #results[f.id] = true
-      #rescue
-      #  results[f.id] = false
+        p "   => OK"
       ensure
         ftp.close unless ftp.nil?
       end
@@ -75,12 +70,11 @@ class Program < ActiveRecord::Base
   def validate
 
     f, doc = nil
-    self.xml_file
     self.program_errors.destroy_all
     self.events.destroy_all
 
     begin
-      f = File.open(@xml_file)
+      f = File.open(self.xml.path)
       doc = Nokogiri::XML(f)
     rescue Exception => e
       p "Exception #{e}"                 
@@ -216,13 +210,19 @@ class Program < ActiveRecord::Base
 
     self.dangers.reload
 
+    pending_file = File.join self.channel.queue_path, self.xml_file_name
+    error_file = File.join self.channel.error_path, self.xml_file_name
+
     if self.dangers.any?
       p "   Moving to #{self.channel.error_path}..."
-      FileUtils.mv @xml_file, self.channel.error_path unless File.exists?(File.join(self.channel.error_path, self.xml_file_name)) and FileUtils.identical?(@xml_file, File.join(self.channel.error_path, self.xml_file_name))
+      FileUtils.cp self.xml.path, error_file
+      FileUtils.rm pending_file if File.exists? pending_file
+      #unless File.exists?(File.join(self.channel.error_path, self.xml_file_name)) and FileUtils.identical?(self.xml.path, File.join(self.channel.error_path, self.xml_file_name))
       self.error_notification if self.notify_error
     else 
       self.transfer
-      FileUtils.rm @xml_file
+      FileUtils.rm pending_file if File.exists? pending_file
+      FileUtils.rm error_file if File.exists? error_file
       self.success_notification if self.notify_success
     end
 
@@ -255,12 +255,11 @@ class Program < ActiveRecord::Base
   def revalidate
 
     f, doc = nil
-    @xml_file = File.join(self.channel.error_path, self.xml_file_name)
 
     self.program_errors.destroy_all
 
     begin
-      f = File.open(@xml_file)
+      f = File.open(self.xml.path)
       doc = Nokogiri::XML(f)
     end
 
@@ -275,7 +274,7 @@ class Program < ActiveRecord::Base
 
     f.close
 
-    File.open(@xml_file, 'w') { |f| f.print(doc.to_xml) }
+    File.open(self.xml.path, 'w') { |f| f.print(doc.to_xml) }
 
     self.validate
 
