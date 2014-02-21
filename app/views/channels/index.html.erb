@@ -56,15 +56,17 @@
                 <% end %>
               <% end %>
             </span>
-            <% unless program.new_record? %>
-              <br/>
-              Latest :
-              <span class="label label-primary"><i class="fa fa-file"></i> <%= program.xml_file_name %></span>
-              <span class="label label-primary"><i class="fa fa-clock-o"></i> <span class="timeago" data-datetime="<%= program.created_at.iso8601 %>"></span></span>
-            <% end %>
             <span class="clearfix"></span>
           </div>
           <div class="panel-body">
+            <% unless program.new_record? %>
+            <p>
+              Latest :
+              <a href="<%= program_path(program) %>"><i class="fa fa-file"></i> <%= program.xml_file_name %></a>
+              - <i class="fa fa-clock-o"></i> <span class="timeago" data-datetime="<%= program.created_at.iso8601 %>"></span>
+              <span class="clearfix"></span>
+            </p>
+            <% end %>
 
             <div class="panel-group" id="accordion<%= channel.id %>">
               

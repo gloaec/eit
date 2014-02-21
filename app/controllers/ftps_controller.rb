@@ -26,9 +26,6 @@ class FtpsController < ApplicationController
   # POST /ftps/ping.json
   def ping
     @ftp = ftp_params[:id].nil? ? Ftp.new(ftp_params) : Ftp.find(ftp_params[:id])
-    p "##########################"
-    p @ftp.inspect
-    p "##########################"
     return @ftp.ping?
   end
 
@@ -80,7 +77,11 @@ class FtpsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def ftp_params
       if params[:ftp][:id] == "0" or params[:ftp][:id].nil?
-        params.require(:ftp).permit(:host, :user, :password, :port, :passive)
+        if params[:ftp][:password] == ""
+          params.require(:ftp).permit(:host, :user, :port, :passive)
+        else
+          params.require(:ftp).permit(:host, :user, :password, :port, :passive)
+        end
       else
         params.require(:ftp).permit(:id)
       end
