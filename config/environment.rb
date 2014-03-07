@@ -17,7 +17,8 @@ end
 ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.default_url_options = {:host => 'nrjtv-eit.nrjtv.fr'}
 ActionMailer::Base.smtp_settings = {
-   :address => "172.21.159.159",
+   #:address => "172.21.159.159",
+   :address => "172.23.1.123",
    :port => 25
    #:authentication => :login
    #:domain => "nrj.fr",
@@ -25,6 +26,6 @@ ActionMailer::Base.smtp_settings = {
    #:password => "tektv@nrj.fr",
    #:enable_starttls_auto => true
 }
-#ActionMailer::Base.default_content_type = "text/html"
+ActionMailer::Base.config.content_type = "text/html"
 #ActionMailer::Base.perform_deliveries = true #try to force sending in development 
 #ActionMailer::Base.raise_delivery_errors = true

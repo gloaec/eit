@@ -6,8 +6,7 @@
 
   <p>
     Click this link bellow for full view :
-    <!--<a href="<%= program_url(@program, :only_path => false) %>"><%= program_url(@program, :only_path => false) %></a>-->
-    <a href="<%= "http://ghis.x64.me:7777/programs/#{@program.id}" %>"><%= "http://ghis.x64.me:7777/programs/#{@program.id}" %></a>
+    <a href="<%= program_url(@program, :only_path => false) %>"><%= program_url(@program, :only_path => false) %></a>
   </p>
 
   <%= render 'programs/errors', :program => @program %>

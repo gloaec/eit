@@ -79,8 +79,8 @@ class Program < ActiveRecord::Base
     self.events.destroy_all
 
     begin
-      f = File.open(self.xml.path)
-      doc = Nokogiri::XML(f)
+      f = File.open(self.xml.path, 'r:iso-8859-1')
+      doc = Nokogiri::XML(f, nil, 'iso-8859-1')
     rescue Exception => e
       p "Exception #{e}"                 
       self.dangers.build(
@@ -267,8 +267,8 @@ class Program < ActiveRecord::Base
     self.program_errors.destroy_all
 
     begin
-      f = File.open(self.xml.path)
-      doc = Nokogiri::XML(f)
+      f = File.open(self.xml.path, 'r:iso-8859-1')
+      doc = Nokogiri::XML(f, nil, 'iso-8859-1')
     end
 
     event_nodes = doc.css("EVENT")
@@ -282,7 +282,7 @@ class Program < ActiveRecord::Base
 
     f.close
 
-    File.open(self.xml.path, 'w') { |f| f.print(doc.to_xml) }
+    File.open(self.xml.path, 'wb') { |f| f << doc.to_xml(encoding: 'US-ASCII') }
 
     self.validate
 
