@@ -107,8 +107,8 @@ class Program < ActiveRecord::Base
         before_event = nil
         events = doc.css("EVENT")
         service = doc.css("SERVICE").first
-
-        self.start_at = service['start_time'].to_time.utc unless service.nil?
+        start_time = service['start_time'].gsub(/Z([+-])/, '\1') unless service.nil?
+        self.start_at = start_time.to_time.utc unless start_time.nil?
 
         events.each do |event|
 
