@@ -108,7 +108,7 @@ class Program < ActiveRecord::Base
         events = doc.css("EVENT")
         service = doc.css("SERVICE").first
         start_time = service['start_time'].gsub(/Z([+-])/, '\1') unless service.nil?
-        self.start_at = start_time.to_time.utc unless start_time.nil?
+        self.start_at = start_time.to_time unless start_time.nil?
 
         events.each do |event|
 
@@ -120,7 +120,7 @@ class Program < ActiveRecord::Base
           description = unless description_node.nil? then description_node.content else nil end
           minimum_age_node = event.css("PARENTAL_RATING").first
           minimum_age = unless minimum_age_node.nil? then minimum_age_node['minimum_age'] else nil end
-          start_at = event['time'].to_time.utc
+          start_at = event['time'].to_time
           unless end_at.nil?
             prev_end_at = end_at
             if prev_end_at <= start_at
@@ -275,7 +275,7 @@ class Program < ActiveRecord::Base
     self.events.each_with_index do |event, i|
       node = event_nodes[i]
       node.css("NAME").first.inner_html = event.name
-      node['time'] = event.start_at.in_time_zone('Berlin').iso8601
+      node['time'] = event.start_at.iso8601.gsub(/(\d\d:\d\d:\d\d)([+-])/, '\1Z\2')
       duration = Time.at(TimeDifference.between(event.start_at, event.end_at).in_seconds).utc
       node['duration'] = duration.strftime("PT%HH%MM%SS")
     end
