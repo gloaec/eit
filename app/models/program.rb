@@ -108,7 +108,7 @@ class Program < ActiveRecord::Base
         events = doc.css("EVENT")
         service = doc.css("SERVICE").first
         start_time = service['start_time'].gsub(/Z([+-])/, '\1') unless service.nil?
-        self.start_at = start_time.to_time unless start_time.nil?
+        self.start_at = start_time.to_time.utc unless start_time.nil?
 
         events.each do |event|
 
@@ -275,7 +275,8 @@ class Program < ActiveRecord::Base
     self.events.each_with_index do |event, i|
       node = event_nodes[i]
       node.css("NAME").first.inner_html = event.name
-      node['time'] = event.start_at.in_time_zone('Berlin').iso8601.gsub(/(\d\d:\d\d:\d\d)([+-])/, '\1Z\2')
+      node['time'] = event.start_at.iso8601.gsub(/Z/, 'Z+01:00')
+      #.in_time_zone('Berlin').iso8601.gsub(/(\d\d:\d\d:\d\d)([+-])/, '\1Z\2')
       duration = Time.at(TimeDifference.between(event.start_at, event.end_at).in_seconds).utc
       node['duration'] = duration.strftime("PT%HH%MM%SS")
     end
