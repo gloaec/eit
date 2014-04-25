@@ -20,7 +20,7 @@
         <th>
           <!--a href="<%= edit_event_path(event) %>"-->
             <i class="fa fa-play-circle"></i>
-            <%= event.name.humanize %>  
+            <%= event.name.sub("Ê", "ê").humanize %>  
           <!--/a-->
           <% unless errors.empty? %>
             <ul class="no-margins">

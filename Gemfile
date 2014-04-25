@@ -28,6 +28,7 @@ gem 'time_difference'
 gem 'paperclip'
 gem 'momentjs-rails'
 gem 'aescrypt'
+gem 'htmlentities'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
