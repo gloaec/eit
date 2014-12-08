@@ -12,6 +12,12 @@ PATH
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
 
+PATH
+  remote: vendor/rb-inotify
+  specs:
+    rb-inotify (0.9.5)
+      ffi (>= 0.5.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -148,8 +154,6 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rb-fsevent (0.9.4)
-    rb-inotify (0.9.5)
-      ffi (>= 0.5.0)
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
@@ -221,6 +225,7 @@ DEPENDENCIES
   paperclip
   rails (= 4.0.1)
   rake (>= 10.1.1)
+  rb-inotify!
   rvm-capistrano
   sass-rails (~> 4.0.0)
   sdoc
