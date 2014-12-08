@@ -41,11 +41,15 @@ module Listen
       _async_changes(dir, path, queue, previous, options)
       _change(queue, :file, dir, rel_path, options)
       puts "Errno::ENOTDIR"
+
     rescue
       _log(:warn) do
         format('scan DIED: %s:%s', $ERROR_INFO, $ERROR_POSITION * "\n")
       end
-      raise
+      record.unset_path(dir, rel_path)
+      _async_changes(dir, path, queue, previous, options)
+      _change(queue, :file, dir, rel_path, options)
+      #raise
     end
 
     def self._async_changes(dir, path, queue, previous, options)
