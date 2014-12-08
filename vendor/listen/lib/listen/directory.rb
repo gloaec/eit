@@ -33,12 +33,14 @@ module Listen
     rescue Errno::ENOENT
       record.unset_path(dir, rel_path)
       _async_changes(dir, rel_path, queue, previous, options)
+      puts "Errno::ENOENT"
 
     rescue Errno::ENOTDIR
       # TODO: path not tested
       record.unset_path(dir, rel_path)
       _async_changes(dir, path, queue, previous, options)
       _change(queue, :file, dir, rel_path, options)
+      puts "Errno::ENOTDIR"
     rescue
       _log(:warn) do
         format('scan DIED: %s:%s', $ERROR_INFO, $ERROR_POSITION * "\n")

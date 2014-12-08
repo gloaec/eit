@@ -49,8 +49,8 @@ module Listen
             end
             @callbacks[dir] = callback
             _configure(dir, &callback)
-          rescue Errno::EACCES => e
-            _log_exception "unable to read directory: #{dir.inspect}"
+          #rescue Errno::EACCES => e
+          #  _log_exception "unable to read directory: #{dir.inspect}"
           end
         end
       end
