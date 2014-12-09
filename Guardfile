@@ -98,8 +98,8 @@ end
 
 
 
-directories %w(channels)
+#directories %w(channels)
 
 guard 'rake', :task => :validate, :run_on_all => false do
-  watch(%r{^channels\/(.+)\.xml$})
+  watch(%r{(.+)\.xml$})
 end
