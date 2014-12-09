@@ -42,13 +42,13 @@ module Listen
       _change(queue, :file, dir, rel_path, options)
       puts "Errno::ENOTDIR"
 
-    rescue
+    rescue => e
       _log(:warn) do
         format('scan DIED: %s:%s', $ERROR_INFO, $ERROR_POSITION * "\n")
       end
       record.unset_path(dir, rel_path)
       _async_changes(dir, path, queue, previous, options)
-      _change(queue, :file, dir, rel_path, options)
+      #puts "[Error Rescued] from 'listen' : #{e.message}" 
       #raise
     end
 

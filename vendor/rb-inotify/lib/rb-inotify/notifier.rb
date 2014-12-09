@@ -188,17 +188,21 @@ module INotify
     #   or the flags don't contain any events
     def watch(path, *flags, &callback)
       return Watcher.new(self, path, *flags, &callback) unless flags.include?(:recursive)
+       
+      begin
+        dir = Dir.new(path)
 
-      dir = Dir.new(path)
-
-      dir.each do |base|
-        d = File.join(path, base)
-        binary_d = d.respond_to?(:force_encoding) ? d.dup.force_encoding('BINARY') : d
-        next if binary_d =~ /\/\.\.?$/ # Current or parent directory
-        watch(d, *flags, &callback) if !RECURSIVE_BLACKLIST.include?(d) && File.directory?(d)
+        dir.each do |base|
+          d = File.join(path, base)
+          binary_d = d.respond_to?(:force_encoding) ? d.dup.force_encoding('BINARY') : d
+          next if binary_d =~ /\/\.\.?$/ # Current or parent directory
+          watch(d, *flags, &callback) if !RECURSIVE_BLACKLIST.include?(d) && File.directory?(d)
+        end
+      rescue Errno::EACCES => e
+        #puts "[Error Rescued] from 'rb-inotify' : #{e.message}" 
+      ensure
+        dir.close unless dir.nil?
       end
-
-      dir.close
 
       rec_flags = [:create, :moved_to]
       return watch(path, *((flags - [:recursive]) | rec_flags)) do |event|
@@ -210,8 +214,6 @@ module INotify
           # If the file has been deleted since the glob was run, we don't want to error out.
         end
       end
-    rescue Errno::EACCES => e
-      puts "Rescued Error #{e.inspect}"
     end
 
     # Starts the notifier watching for filesystem events.
