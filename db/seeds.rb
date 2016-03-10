@@ -56,20 +56,20 @@ me = User.create!({
 
 channel1 = Channel.create({
   name:         "NRJ Paris",
-  queue_path:   "/eit/NRJParis_pending",
-  error_path:   "/eit/NRJParis_error"
+  queue_path:   "#{Rails.root}/upload/NRJParis_pending",
+  error_path:   "#{Rails.root}/upload/NRJParis_error"
 })
 
 channel2 = Channel.create({
   name:         "NRJ 12",
-  queue_path:   "/eit/NRJ12_pending",
-  error_path:   "/eit/NRJ12_error"
+  queue_path:   "#{Rails.root}/upload/NRJ12_pending",
+  error_path:   "#{Rails.root}/upload/NRJ12_error"
 })
 
 channel3 = Channel.create({
   name:         "Chérie 25",
-  queue_path:   "/eit/Cherie25_pending",
-  error_path:   "/eit/Cherie25_error"
+  queue_path:   "#{Rails.root}/upload/Cherie25_pending",
+  error_path:   "#{Rails.root}/upload/Cherie25_error"
 })
 
 

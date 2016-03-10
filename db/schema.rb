@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_error_contacts", ["channel_id", "user_id"], name: "index_channels_error_contacts_on_channel_id_and_user_id", unique: true
+  add_index "channels_error_contacts", ["channel_id", "user_id"], name: "index_channels_error_contacts_on_channel_id_and_user_id", unique: true, using: :btree
 
   create_table "channels_ftps", force: true do |t|
     t.integer "channel_id"
@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.string  "success_path"
   end
 
-  add_index "channels_ftps", ["channel_id"], name: "index_channels_ftps_on_channel_id"
-  add_index "channels_ftps", ["ftp_id"], name: "index_channels_ftps_on_ftp_id"
+  add_index "channels_ftps", ["channel_id"], name: "index_channels_ftps_on_channel_id", using: :btree
+  add_index "channels_ftps", ["ftp_id"], name: "index_channels_ftps_on_ftp_id", using: :btree
 
   create_table "channels_success_contacts", force: true do |t|
     t.integer  "channel_id"
@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_success_contacts", ["channel_id", "user_id"], name: "index_channels_success_contacts_on_channel_id_and_user_id", unique: true
+  add_index "channels_success_contacts", ["channel_id", "user_id"], name: "index_channels_success_contacts_on_channel_id_and_user_id", unique: true, using: :btree
 
   create_table "channels_users", force: true do |t|
     t.integer  "channel_id"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "channels_users", ["channel_id", "user_id"], name: "index_channels_users_on_channel_id_and_user_id", unique: true
+  add_index "channels_users", ["channel_id", "user_id"], name: "index_channels_users_on_channel_id_and_user_id", unique: true, using: :btree
 
   create_table "events", force: true do |t|
     t.string   "name"
@@ -80,13 +80,13 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "events", ["program_id"], name: "index_events_on_program_id"
+  add_index "events", ["program_id"], name: "index_events_on_program_id", using: :btree
 
   create_table "ftps", force: true do |t|
     t.string   "host"
     t.integer  "port"
     t.string   "user",                             default: "", null: false
-    t.binary   "password_digest", limit: 10485760
+    t.binary   "password_digest", limit: 16777215
     t.boolean  "passive"
     t.integer  "channel_id"
     t.datetime "created_at"
@@ -105,9 +105,9 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "program_errors", ["after_event_id"], name: "index_program_errors_on_after_event_id"
-  add_index "program_errors", ["before_event_id"], name: "index_program_errors_on_before_event_id"
-  add_index "program_errors", ["program_id"], name: "index_program_errors_on_program_id"
+  add_index "program_errors", ["after_event_id"], name: "index_program_errors_on_after_event_id", using: :btree
+  add_index "program_errors", ["before_event_id"], name: "index_program_errors_on_before_event_id", using: :btree
+  add_index "program_errors", ["program_id"], name: "index_program_errors_on_program_id", using: :btree
 
   create_table "programs", force: true do |t|
     t.datetime "start_at"
@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "xml_updated_at"
   end
 
-  add_index "programs", ["channel_id"], name: "index_programs_on_channel_id"
+  add_index "programs", ["channel_id"], name: "index_programs_on_channel_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(version: 20140201150444) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

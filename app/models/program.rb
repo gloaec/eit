@@ -197,7 +197,7 @@ class Program < ActiveRecord::Base
 
       end
     rescue Exception => e
-      p "Exception #{e}"                 
+      p "Exception #{e}"
       self.dangers.build(
         :classname => 'danger',
         :code => ProgramError::OTHER,
@@ -272,11 +272,13 @@ class Program < ActiveRecord::Base
     end
 
     event_nodes = doc.css("EVENT")
+    service_node = doc.css("SERVICE").first
     self.events.each_with_index do |event, i|
       node = event_nodes[i]
       name = HTMLEntities.new.encode(event.name, :decimal)
       node.css("NAME").first.inner_html = name
       node['time'] = event.start_at.iso8601.gsub(/Z/, 'Z+01:00')
+      service_node['start_time'] = node['time'] if i == 0
       #.in_time_zone('Berlin').iso8601.gsub(/(\d\d:\d\d:\d\d)([+-])/, '\1Z\2')
       duration = Time.at(TimeDifference.between(event.start_at, event.end_at).in_seconds).utc
       node['duration'] = duration.strftime("PT%HH%MM%SS")
