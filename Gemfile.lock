@@ -164,6 +164,9 @@ GEM
     sdoc (0.3.20)
       json (>= 1.1.3)
       rdoc (~> 3.10)
+    simple_form (3.1.1)
+      actionpack (~> 4.0)
+      activemodel (~> 4.0)
     slop (3.6.0)
     sprockets (2.10.1)
       hike (~> 1.2)
@@ -217,6 +220,7 @@ DEPENDENCIES
   listen!
   momentjs-rails
   mysql2
+  net-sftp
   nokogiri
   paperclip
   rails (= 4.0.1)
@@ -225,6 +229,7 @@ DEPENDENCIES
   rvm-capistrano
   sass-rails (~> 4.0.0)
   sdoc
+  simple_form
   sqlite3
   therubyracer
   time_difference

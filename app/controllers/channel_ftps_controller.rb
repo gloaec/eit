@@ -40,8 +40,8 @@ class ChannelFtpsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def channel_ftp_params
-      if params[:channel_ftp][:ftp_id] == "0" or params[:channel_ftp][:ftp_id].nil?
-        params.require(:channel_ftp).permit(:success_path, ftp_attributes: [:id, :host, :user, :password, :port, :passive])
+      if params[:channel_ftp][:ftp_id] == "0" or params[:channel_ftp][:ftp_id].blank?
+        params.require(:channel_ftp).permit(:success_path, ftp_attributes: [:id, :host, :user, :password, :port, :passive, :protocol])
       else
         params.require(:channel_ftp).permit(:success_path, :ftp_id)
       end

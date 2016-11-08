@@ -1,6 +1,6 @@
 <% @channel_ftp = @channel.channel_ftps.new(success_path: '/') %>
 
-<%= form_for [@channel, @channel_ftp], html: { class: 'form-horizontal' } do |f| %>
+<%= simple_form_for [@channel, @channel_ftp], html: { class: 'form-horizontal' } do |f| %>
 
   <div class="modal fade" id="ftp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -12,17 +12,23 @@
             <%= t :add_ftp %>
           </h4>
         </div>
-	<div class="modal-body">
+      	<div class="modal-body">
           <div class="form-group">
             <%= f.label :ftp_id, t(:ftp), class: 'control-label col-sm-3' %>
             <div class="col-sm-9">
               <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-sitemap"></i></span>
-                <%= f.select :ftp_id, [["Create new FTP", 0]] + @ftps.collect {|x| ["#{x.user}@#{x.host}",x.id]}, {}, { class: "form-control" } %>
+                <%= f.select :ftp_id, [["Create new FTP", nil]] + @ftps.collect {|x| ["#{x.user}@#{x.host}",x.id]}, {}, { class: "form-control" } %>
               </div>
             </div>
           </div>
           <%= f.fields_for :ftp, Ftp.new do |ff| %>
+            <div class="form-group">
+              <%= ff.label :protocol, class: 'control-label col-sm-3' %>
+              <div class="col-sm-9 clearfix">
+                <%= ff.input :protocol, label: false, wrapper: false, as: :radio_buttons, collection: [["FTP", :ftp],["SFTP", :sftp]], item_wrapper_class: 'pull-left right-20' %>
+              </div>
+            </div>
             <div class="form-group">
               <%= ff.label :user, class: 'control-label col-sm-3' %>
               <div class="col-sm-9">
@@ -62,11 +68,11 @@
                 </div>
                 <%= ff.check_box :passive, class: 'hidden' %>
               </fieldset>
-	      <div class="col-sm-3">
-  	        <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-info btn-ping pull-right">
+	            <div class="col-sm-3">
+  	            <button id="ping_ftp" data-loading-text="Loading..." type="button" class="btn btn-info btn-ping pull-right">
                   <i class="fa fa-signal"></i>
-  	          <%= t :ping_ftp %>
-  	        </button>
+                  Ping
+  	            </button>
               </div>
             </div>
             <div class="form-group">
@@ -101,13 +107,14 @@
 
     function form_ftp(){
       return {
-        id:               $('#channel_ftp_ftp_id')                 .val(), 
-        user:             $('#channel_ftp_ftp_attributes_user')    .val(), 
-        host:             $('#channel_ftp_ftp_attributes_host')    .val(),
-        port:             $('#channel_ftp_ftp_attributes_port')    .val(),
-        password_digest:  $('#channel_ftp_ftp_attributes_password').val(),
-        password:         $('#channel_ftp_ftp_attributes_password').val(),
-        passive:          $('#channel_ftp_ftp_attributes_passive') .val()
+        id:               $('#channel_ftp_ftp_id').val(),
+        protocol:         $('input[name="channel_ftp[ftp_attributes][protocol]"]:checked').val(),
+        user:             $('#channel_ftp_ftp_attributes_user').val(),
+        host:             $('#channel_ftp_ftp_attributes_host').val(),
+        port:             $('#channel_ftp_ftp_attributes_port').val(),
+        password_digest:  $('#channel_ftp_ftp_id').val() ? null : $('#channel_ftp_ftp_attributes_password').val(),
+        password:         $('#channel_ftp_ftp_id').val() ? null : $('#channel_ftp_ftp_attributes_password').val(),
+        passive:          $('#channel_ftp_ftp_attributes_passive').val()
       }
     }
 
@@ -115,35 +122,35 @@
     var ftps = <%= @ftps.to_json.html_safe %>;
 
     $("#ping_ftp").on('click', function(e){
-      $('.btn-ping').button('loading');	    
+      $('.btn-ping').button('loading');
       e.preventDefault();
       var $form = $("#channel_form");
-      $.post("<%= ftps_ping_path(format: :json) %>", { 
+      $.post("<%= ftps_ping_path(format: :json) %>", {
         action: "ping",
         ftp: form_ftp()
       }).done(function(data){
-        if(data.response){
-	  $('.btn-ping')
-	  .button('reset').empty()
-	  .removeClass('btn-info btn-danger')
-	  .addClass('btn-success')
-	  .append($('<i>').addClass('fa fa-link'))
-	  .append(' Working');
-	} else {
-	  $('.btn-ping')
-	  .button('reset').empty()
-	  .removeClass('btn-info btn-success')
-	  .addClass('btn-danger')
-	  .append($('<i>').addClass('fa fa-unlink'))
-	  .append(' Error');
-	}
+        if(data){
+	        $('.btn-ping')
+	        .button('reset').empty()
+	        .removeClass('btn-info btn-danger')
+	        .addClass('btn-success')
+	        .append($('<i>').addClass('fa fa-link'))
+	        .append(' Working');
+	      } else {
+	        $('.btn-ping')
+	        .button('reset').empty()
+	        .removeClass('btn-info btn-success')
+	        .addClass('btn-danger')
+	        .append($('<i>').addClass('fa fa-unlink'))
+	        .append(' Error');
+	      }
         setTimeout(function(){
           $('.btn-ping')
           .button('reset').empty()
           .removeClass('btn-success btn-danger')
           .addClass('btn-info')
           .append($('<i>').addClass('fa fa-signal'))
-          .append(' Ping Ftp');
+          .append(' Ping');
         }, 3000);
       }).error(function(){
 	  $('.btn-ping')
@@ -166,11 +173,11 @@
       $('.btn-mode').removeClass('active');
       $(this).addClass('active');
     });
-     
 
     $('#channel_ftp_ftp_id').change(function(){
       var id = $(this).val();
       if(id == 0){
+        $('input[name="channel_ftp[ftp_attributes][protocol]"]').prop('disabled', false).filter('[value="'+ftp_bkp.protocol+'"]').prop('checked', true)
         $('#channel_ftp_ftp_attributes_user')    .prop('disabled', false).val(ftp_bkp.user)
         $('#channel_ftp_ftp_attributes_host')    .prop('disabled', false).val(ftp_bkp.host)
         $('#channel_ftp_ftp_attributes_port')    .prop('disabled', false).val(ftp_bkp.port)
@@ -182,6 +189,7 @@
         $.each(ftps, function(k,v){
           if(v.id == id) ftp = v
         }); 
+        $('input[name="channel_ftp[ftp_attributes][protocol]"]').prop('disabled', true).filter('[value="'+ftp.protocol+'"]').prop('checked', true)
         $('#channel_ftp_ftp_attributes_user')    .prop('disabled', true).val(ftp.user)
         $('#channel_ftp_ftp_attributes_host')    .prop('disabled', true).val(ftp.host)
         $('#channel_ftp_ftp_attributes_port')    .prop('disabled', true).val(ftp.port)

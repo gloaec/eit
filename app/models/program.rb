@@ -35,14 +35,14 @@ class Program < ActiveRecord::Base
       p "   Sending success notification to #{user.email}..."
       ProgramMailer.success_notification user, self
     end
-  end 
+  end
 
   def error_notification
     self.channel.error_contacts.each do |user|
       p "   Sending error notification to #{user.email}..."
       ProgramMailer.error_notification user, self
     end
-  end 
+  end
 
   def transfer
     ftp, results = nil, {}
@@ -50,26 +50,41 @@ class Program < ActiveRecord::Base
       f = cf.ftp
       remote_path = cf.success_path #"/NRJ" #f.root_path
 
-      p "   Transferring to #{f.user}@#{f.host}:#{remote_path}..."
+      p "   Transferring to #{f.protocol.upcase} #{f.user}@#{f.host}:#{remote_path}..."
 
       begin
         Timeout::timeout(10) do
-          ftp = Net::FTP.new
-          ftp.passive = f.passive || false
-          ftp.connect(f.host, f.port) 
-          ftp.login f.user, f.password
-          ftp.chdir(remote_path)
-          ftp.put(self.xml.path)
-          ftp.quit
-          p "   => OK"
+          case f.protocol
+          when 'ftp' then transfer_ftp(f, remote_path)
+          when 'sftp' then transfer_sftp(f, remote_path)
+          else puts "UNKNOWN PROTOCOL !!!"
+          end
         end
-      rescue Timeout::Error
+      rescue
         results[cf.id] = "#{f.user}@#{f.host}:#{remote_path}"
       ensure
         ftp.close unless ftp.nil?
       end
     end
     results
+  end
+
+  def transfer_ftp(f, remote_path)
+    ftp = Net::FTP.new
+    ftp.passive = f.passive || false
+    ftp.connect(f.host, f.port)
+    ftp.login f.user, f.password
+    ftp.chdir(remote_path)
+    ftp.put(self.xml.path)
+    ftp.quit
+    p "   => OK"
+  end
+
+  def transfer_sftp(f, remote_path)
+    Net::SFTP.start(f.host, f.user, password: f.password, port: f.port) do |sftp|
+      sftp.upload!(self.xml.path, File.join(remote_path, self.xml_file_name))
+    end
+    p "   => OK"
   end
 
   def validate
@@ -82,7 +97,7 @@ class Program < ActiveRecord::Base
       f = File.open(self.xml.path, 'r:iso-8859-1')
       doc = Nokogiri::XML(f, nil, 'iso-8859-1')
     rescue Exception => e
-      p "Exception #{e}"                 
+      p "Exception #{e}"
       self.dangers.build(
         :classname => 'danger',
         :code => ProgramError::OTHER,

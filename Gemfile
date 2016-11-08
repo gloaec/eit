@@ -31,6 +31,8 @@ gem 'paperclip'
 gem 'momentjs-rails'
 gem 'aescrypt'
 gem 'htmlentities'
+gem 'simple_form'
+gem 'net-sftp'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

@@ -11,7 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140201150444) do
+ActiveRecord::Schema.define(version: 20161026073929) do
+
+  create_table "channel_transfers", force: true do |t|
+    t.integer  "channel_id"
+    t.string   "name"
+    t.time     "start_at"
+    t.integer  "wait_for"
+    t.string   "filename"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "channel_transfers", ["channel_id"], name: "index_channel_transfers_on_channel_id", using: :btree
 
   create_table "channels", force: true do |t|
     t.string   "name"
@@ -85,12 +97,13 @@ ActiveRecord::Schema.define(version: 20140201150444) do
   create_table "ftps", force: true do |t|
     t.string   "host"
     t.integer  "port"
-    t.string   "user",                             default: "", null: false
+    t.string   "user",                             default: "",    null: false
     t.binary   "password_digest", limit: 16777215
-    t.boolean  "passive"
+    t.boolean  "passive",                          default: false
     t.integer  "channel_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "protocol"
   end
 
   create_table "program_errors", force: true do |t|
@@ -124,6 +137,21 @@ ActiveRecord::Schema.define(version: 20140201150444) do
   end
 
   add_index "programs", ["channel_id"], name: "index_programs_on_channel_id", using: :btree
+
+  create_table "transfer_locations", force: true do |t|
+    t.string   "name"
+    t.string   "type"
+    t.integer  "channel_transfer_id"
+    t.string   "path"
+    t.string   "filter"
+    t.boolean  "distant",             default: false
+    t.integer  "ftp_id"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
+  add_index "transfer_locations", ["channel_transfer_id"], name: "index_transfer_locations_on_channel_transfer_id", using: :btree
+  add_index "transfer_locations", ["ftp_id"], name: "index_transfer_locations_on_ftp_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
