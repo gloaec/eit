@@ -60,8 +60,8 @@ class Program < ActiveRecord::Base
           else puts "UNKNOWN PROTOCOL !!!"
           end
         end
-      rescue
-        results[cf.id] = "#{f.user}@#{f.host}:#{remote_path}"
+      rescue Exception => e
+        results[cf.id] = "<strong>#{f.user}@#{f.host}:#{remote_path}</strong> <br/>#{e}"
       ensure
         ftp.close unless ftp.nil?
       end
