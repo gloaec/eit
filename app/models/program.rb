@@ -61,7 +61,9 @@ class Program < ActiveRecord::Base
           end
         end
       rescue Exception => e
-        results[cf.id] = "<strong>#{f.user}@#{f.host}:#{remote_path}</strong> <br/>#{e}"
+        unless "#{e}" == "execution expired"
+          results[cf.id] = "<strong>#{f.user}@#{f.host}:#{remote_path}</strong> <br/>#{e}"
+        end
       ensure
         ftp.close unless ftp.nil?
       end
