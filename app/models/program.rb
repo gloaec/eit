@@ -53,7 +53,7 @@ class Program < ActiveRecord::Base
       p "   Transferring to #{f.protocol.upcase} #{f.user}@#{f.host}:#{remote_path}..."
 
       begin
-        Timeout::timeout(10) do
+        Timeout::timeout(30) do
           case f.protocol
           when 'ftp' then transfer_ftp(f, remote_path)
           when 'sftp' then transfer_sftp(f, remote_path)
